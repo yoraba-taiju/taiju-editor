@@ -12,9 +12,11 @@ namespace TaijuEditor.Models
   public class Stage
   {
     public World World { get; set; }
+    public Timeline Timeline { get; set; }
     public Stage()
     {
       this.World = new World();
+      this.Timeline = new Timeline();
     }
 
     public string Serialize()
@@ -24,7 +26,7 @@ namespace TaijuEditor.Models
         PropertyNamingPolicy = new ScakeCaseNamingPolicy(),
         WriteIndented = true
       };
-      return System.Text.Json.JsonSerializer.Serialize(this, serializeOptions);
+      return JsonSerializer.Serialize(this, serializeOptions);
     }
   }
 }

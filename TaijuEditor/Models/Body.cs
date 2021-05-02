@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TaijuEditor.Models
 {
-  internal class Body
+  public class Body
   {
     public readonly Area Area;
     public Body(Area area)

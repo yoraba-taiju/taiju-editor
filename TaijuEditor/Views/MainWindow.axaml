@@ -7,5 +7,6 @@
         x:Class="TaijuEditor.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="TaijuEditor"
-        Content="{Binding Stage}">
+        Content="{Binding Stage}"
+        >
 </Window>

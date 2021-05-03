@@ -3,6 +3,8 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using TaijuEditor.ViewModels;
 using TaijuEditor.Views;
+using System;
+using System.Diagnostics;
 
 namespace TaijuEditor
 {
@@ -11,6 +13,7 @@ namespace TaijuEditor
     public override void Initialize()
     {
       AvaloniaXamlLoader.Load(this);
+      Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
     }
 
     public override void OnFrameworkInitializationCompleted()

@@ -1,11 +1,14 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 
-namespace UnitTest
+namespace TaijuTests
 {
-  [TestClass]
-  public class StringUtilTest
+  public class UtilTests
   {
-    [TestMethod]
+    [SetUp]
+    public void Setup()
+    {
+    }
+    [Test]
     public void TestSnakeCase()
     {
       Assert.AreEqual("test_case", TaijuEditor.Util.StringUtil.ToSnakeCase("TestCase"));

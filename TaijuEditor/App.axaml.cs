@@ -15,15 +15,15 @@ namespace TaijuEditor
 
     public override void OnFrameworkInitializationCompleted()
     {
+      base.OnFrameworkInitializationCompleted();
       if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
       {
+        var stage = new TaijuEditor.Models.Stage();
         desktop.MainWindow = new MainWindow
         {
-          DataContext = new MainWindowViewModel(),
+          DataContext = new MainWindowViewModel(stage),
         };
       }
-
-      base.OnFrameworkInitializationCompleted();
     }
   }
 }

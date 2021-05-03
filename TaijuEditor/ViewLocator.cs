@@ -11,6 +11,7 @@ namespace TaijuEditor
 
     public IControl Build(object data)
     {
+      Console.WriteLine(data);
       var name = data.GetType().FullName!.Replace("ViewModel", "View");
       var type = Type.GetType(name);
 

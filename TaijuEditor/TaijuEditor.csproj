@@ -14,8 +14,6 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.3" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Views\Timeline.axaml.cs">
-      <DependentUpon>Timeline.axaml</DependentUpon>
-    </Compile>
+    <Folder Include="Services" />
   </ItemGroup>
 </Project>

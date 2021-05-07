@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext, EguiPlugin};
-use taiju::*;
+use taiju::chapter::prelude::*;
+use taiju::donut::Clock;
 use bevy::ecs::system::Command;
 
 mod runtime;
@@ -20,7 +21,7 @@ fn main() {
     .run();
 }
 
-pub fn setup(
+fn setup(
   mut commands: Commands,
   mut _rt: ResMut<runtime::Runtime>,
   clock: Res<ClockRef>,

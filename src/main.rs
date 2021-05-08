@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_egui::{egui, EguiContext, EguiPlugin};
+use bevy_egui::{egui, egui::{InputState, Event}, EguiContext, EguiPlugin, };
 use taiju::chapter::prelude::*;
 use taiju::donut::Clock;
 use bevy::ecs::system::Command;
@@ -36,14 +36,50 @@ fn setup(
   // cameras
   commands.spawn_bundle(OrthographicCameraBundle::new_2d());
   commands.spawn_bundle(UiCameraBundle::default());
+
+  // Editor
+  let map_id = commands
+    .spawn()
+    .insert(editor::Map)
+    .insert(Transform::identity())
+    .id();
+  commands.insert_resource(editor::Editor::new(map_id));
 }
 
 fn ui_menu(
   mut commands: Commands,
   egui_ctx: Res<EguiContext>,
+  mut editor: ResMut<editor::Editor>,
   clock: Res<ClockRef>,
   asset_server: Res<AssetServer>,
 ) {
+  let input: &egui::InputState = egui_ctx.ctx().input();
+  for ev in input.events.iter() {
+    match ev {
+      &Event::Copy => {}
+      &Event::Cut => {}
+      Event::Text(str) => {}
+      &Event::Key {
+        key: Key,
+        pressed: bool,
+        modifiers: Modifiers,
+      } => {}
+      &Event::PointerMoved(pos) => {}
+      &Event::PointerButton {
+        pos,
+        button,
+        pressed,
+        modifiers,
+      } => {
+        if pressed {
+          if button == egui::PointerButton::Secondary {
+            editor.menu_pos = Some((pos.x, pos.y));
+          }
+        }
+      }
+      &Event::PointerGone => {}
+    }
+  }
   egui::TopPanel::top("top_panel").show(egui_ctx.ctx(), |ui| {
     egui::menu::bar(ui, |ui| {
       egui::menu::menu(ui, "File", |ui| {
@@ -65,9 +101,12 @@ fn ui_menu(
       });
     });
   });
-  egui::Window::new("Hello")
-    .default_pos((100.0, 100.0))
-    .show(egui_ctx.ctx(), |ui| {
-      ui.label("world");
-    });
+
+  if let Some(pos) = editor.menu_pos {
+    egui::Window::new("Hello")
+      .default_pos(pos)
+      .show(egui_ctx.ctx(), |ui| {
+        ui.label("world");
+      });
+  }
 }

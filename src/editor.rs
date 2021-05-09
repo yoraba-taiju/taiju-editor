@@ -1,12 +1,11 @@
 mod map;
 mod runtime;
 
-use map::Map;
 use runtime::Runtime;
 
 use std::ops::DerefMut;
 use bevy::{
-  input::mouse::{MouseMotion, MouseWheel},
+  input::mouse::MouseWheel,
   prelude::*,
 };
 use bevy_egui::{egui, egui::Event, EguiContext};
@@ -16,8 +15,6 @@ pub struct MapAnchor;
 
 pub(crate) struct Editor {
   runtime: Runtime,
-  // map entity
-  map_id: Entity,
   // map_handling
   map_scale: f32,
   mouse_pos: Vec2,
@@ -35,15 +32,13 @@ impl Editor {
     windows: Res<Windows>,
   ) {
     let window = windows.get_primary().unwrap();
-    let map_id = commands
+    commands
       .spawn()
       .insert(MapAnchor)
       .insert(Transform::identity())
-      .insert(GlobalTransform::identity())
-      .id();
+      .insert(GlobalTransform::identity());
     commands.insert_resource(Self {
       runtime: Runtime::new(),
-      map_id,
       map_scale: 1.0,
       mouse_pos: Default::default(),
       drag_start_mouse_pos: Default::default(),

@@ -1,0 +1,5 @@
+# https://endler.dev/2020/rust-compile-times/#switch-to-a-faster-linker
+[target.x86_64-unknown-linux-gnu]
+rustflags = [
+    "-C", "link-arg=-fuse-ld=lld",
+]

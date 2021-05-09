@@ -1,6 +1,10 @@
 use bevy::prelude::*;
 use bevy::tasks::{TaskPool, TaskPoolBuilder};
-use std::{future::Future, ops::{Deref, DerefMut}, sync::{Arc, RwLock}};
+use std::{
+  future::Future,
+  ops::{DerefMut},
+  sync::{Arc, RwLock}
+};
 
 pub(crate) struct Runtime {
   pub(crate) task_pool: TaskPool,

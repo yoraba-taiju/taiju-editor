@@ -1,3 +1,9 @@
+mod map;
+mod runtime;
+
+use map::Map;
+use runtime::Runtime;
+
 use std::ops::DerefMut;
 use bevy::{
   input::mouse::{MouseMotion, MouseWheel},
@@ -5,9 +11,8 @@ use bevy::{
 };
 use bevy_egui::{egui, egui::Event, EguiContext};
 use taiju::chapter::prelude::*;
-use super::runtime::Runtime;
 
-pub struct Map;
+pub struct MapAnchor;
 
 pub(crate) struct Editor {
   runtime: Runtime,
@@ -18,15 +23,21 @@ pub(crate) struct Editor {
   mouse_pos: Vec2,
   drag_start_mouse_pos: Vec2,
   drag_start_map_pos: Vec2,
+  //
+  window_size: Vec2,
   // 
   menu_pos: Option<(f32, f32)>,
 }
 
 impl Editor {
-  pub(crate) fn spawn(mut commands: Commands) {
+  pub(crate) fn spawn(
+    mut commands: Commands,
+    windows: Res<Windows>,
+  ) {
+    let window = windows.get_primary().unwrap();
     let map_id = commands
       .spawn()
-      .insert(Map)
+      .insert(MapAnchor)
       .insert(Transform::identity())
       .insert(GlobalTransform::identity())
       .id();
@@ -37,19 +48,23 @@ impl Editor {
       mouse_pos: Default::default(),
       drag_start_mouse_pos: Default::default(),
       drag_start_map_pos: Default::default(),
+      window_size: Vec2::new(window.width(), window.height()),
       menu_pos: Default::default(),
     });
   }
   pub(crate) fn update_map(
+    mut editor_res: ResMut<Editor>,
     mut commands: Commands,
+    windows: Res<Windows>,
     mouse_button_input: Res<Input<MouseButton>>,
     mut mouse_wheel_events: EventReader<MouseWheel>,
     mut cursor_moved_events: EventReader<CursorMoved>,
-    mut editor_res: ResMut<Editor>,
     enemy_server: Res<EnemyServer>,
-    mut map_query: Query<(Entity, &mut Transform), With<Map>>,
+    mut map_query: Query<(Entity, &mut Transform), With<MapAnchor>>,
   ) {
     let mut e = editor_res.deref_mut();
+    let window = windows.get_primary().unwrap();
+    e.window_size = Vec2::new(window.width(), window.height());
     let (map_id, mut map_trans) = map_query.single_mut().unwrap();
     // zoom map
     for event in mouse_wheel_events.iter() {
@@ -75,18 +90,20 @@ impl Editor {
     }
     // modify map
     if mouse_button_input.just_pressed(MouseButton::Right) {
-      let spr = enemy_server.sprites[&EnemyBody::Enemy01].clone();
-      //spr.transform.translation.x = 
-      commands.spawn().insert_bundle(spr).insert(Parent(map_id));
+      let mut spr = enemy_server.sprites[&EnemyBody::Enemy01].clone();
+      let pt = (e.mouse_in_map() - e.window_size/2.0 - Vec2::new(map_trans.translation.x, map_trans.translation.y)) / e.map_scale;
+      spr.transform.translation.x = pt.x;
+      spr.transform.translation.y = pt.y;
+      // Parentを指定する方法だと駄目だった。バグ？
+      let id = commands.spawn().insert_bundle(spr).id();
+      commands.entity(map_id).push_children(&[id]);
     }
   }
   pub(crate) fn update_ui (
-    mut commands: Commands,
     egui_ctx: Res<EguiContext>,
-    mut editor: ResMut<Editor>,
-    clock: Res<ClockRef>,
-    asset_server: Res<AssetServer>,
+    mut editor_res: ResMut<Editor>,
   ) {
+    let e = editor_res.deref_mut();
     let input: &egui::InputState = egui_ctx.ctx().input();
     for ev in input.events.iter() {
       match ev {
@@ -105,11 +122,12 @@ impl Editor {
           pressed,
           modifiers,
         } => {
+          /*
           if button == egui::PointerButton::Secondary {
             if pressed {
-              editor.menu_pos = Some((pos.x, pos.y));
+              e.menu_pos = Some((pos.x, pos.y));
             }
-          }
+          }*/
         }
         &Event::PointerGone => {}
       }
@@ -119,10 +137,7 @@ impl Editor {
         egui::menu::menu(ui, "File", |ui| {
           ui.label("Open Scene");
           ui.indent("Open Source", |ui| {
-            if ui.button("Stage01").clicked() {
-              commands.remove_resource::<Handle<Scenario>>();
-              let handle = asset_server.load::<Scenario, _>("scenario/stage01.ron");
-              commands.insert_resource(handle);
+            if ui.button("Chapter 01").clicked() {
             }
           });
           ui.separator();
@@ -136,14 +151,18 @@ impl Editor {
       });
     });
   
+    /*
     let mut open = true;
-    if let Some(pos) = editor.menu_pos {
+    if let Some(pos) = e.menu_pos {
       egui::Window::new("Hello")
         .open(&mut open)
         .default_pos(pos)
         .show(egui_ctx.ctx(), |ui| {
           ui.label("world");
         });
-    }
+    }*/
+  }
+  pub(crate) fn mouse_in_map(&self) -> Vec2 {
+    Vec2::new(self.mouse_pos.x, self.mouse_pos.y)
   }
 }

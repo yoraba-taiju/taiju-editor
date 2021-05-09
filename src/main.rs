@@ -3,7 +3,6 @@ use bevy_egui::EguiPlugin;
 use taiju::chapter::prelude::*;
 use taiju::donut::Clock;
 
-mod runtime;
 mod editor;
 
 fn main() {
@@ -13,7 +12,6 @@ fn main() {
     .add_plugins(DefaultPlugins)
     .add_plugin(EguiPlugin)
     .add_plugin(StagePlugin)
-    .init_resource::<runtime::Runtime>()
     .insert_resource(Clock::new())
     .add_startup_system(setup.system())
     .add_startup_system(editor::Editor::spawn.system())
@@ -24,7 +22,6 @@ fn main() {
 
 fn setup(
   mut commands: Commands,
-  mut _rt: ResMut<runtime::Runtime>,
   mut texture_atlases: ResMut<Assets<TextureAtlas>>,
   mut color_materials: ResMut<Assets<ColorMaterial>>,
   asset_server: Res<AssetServer>,

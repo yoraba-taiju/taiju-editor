@@ -3,3 +3,7 @@
 rustflags = [
     "-C", "link-arg=-fuse-ld=lld",
 ]
+
+# https://github.com/rust-analyzer/rust-analyzer/blob/master/.cargo/config
+[target.x86_64-pc-windows-msvc]
+linker = "rust-lld"

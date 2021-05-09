@@ -5,18 +5,21 @@ use bevy::{
 };
 use bevy_egui::{egui, egui::Event, EguiContext};
 use taiju::chapter::prelude::*;
+use super::runtime::Runtime;
 
 pub struct Map;
 
-pub struct Editor {
-  pub map_id: Entity,
+pub(crate) struct Editor {
+  runtime: Runtime,
+  // map entity
+  map_id: Entity,
   // map_handling
-  pub map_scale: f32,
-  pub mouse_pos: Vec2,
-  pub drag_start_mouse_pos: Vec2,
-  pub drag_start_map_pos: Vec2,
+  map_scale: f32,
+  mouse_pos: Vec2,
+  drag_start_mouse_pos: Vec2,
+  drag_start_map_pos: Vec2,
   // 
-  pub menu_pos: Option<(f32, f32)>,
+  menu_pos: Option<(f32, f32)>,
 }
 
 impl Editor {
@@ -28,6 +31,7 @@ impl Editor {
       .insert(GlobalTransform::identity())
       .id();
     commands.insert_resource(Self {
+      runtime: Runtime::new(),
       map_id,
       map_scale: 1.0,
       mouse_pos: Default::default(),

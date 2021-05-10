@@ -3,9 +3,10 @@ use taiju::chapter::prelude::*;
 mod timeline;
 use timeline::Timeline;
 
+#[derive(Debug, Default)]
 pub(crate) struct Map {
-  scenario: Scenario,
-  timeline: Timeline,
+  pub scenario: Scenario,
+  pub timeline: Timeline,
 }
 
 impl Map {

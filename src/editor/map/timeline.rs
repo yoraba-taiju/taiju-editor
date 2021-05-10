@@ -21,7 +21,7 @@ impl Timeline {
     let mut pos = Vec2::new(0.0, 0.0);
     let mut motion: Motion = Motion::Constant(0.0, 0.0);
     for (at, events) in scenario.events.iter() {
-      while self.pos.len() < (*at as usize) {
+      while self.pos.len() <= (*at as usize) {
         pos = move_pos_by_motion(&pos, &motion);
         self.pos.push(pos);
       }

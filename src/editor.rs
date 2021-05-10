@@ -1,20 +1,23 @@
 mod map;
 mod runtime;
 
-use runtime::Runtime;
-
-use std::ops::DerefMut;
+use std::{fs::File, io::Read, ops::DerefMut, sync::Arc, usize};
 use bevy::{
   input::mouse::MouseWheel,
   prelude::*,
 };
-use bevy_egui::{egui, egui::Event, EguiContext};
+use bevy_egui::{egui, EguiContext};
 use taiju::chapter::prelude::*;
+use runtime::{Runtime, Handle};
+use map::Map;
 
 pub struct MapAnchor;
 
 pub(crate) struct Editor {
   runtime: Runtime,
+  // map loading
+  map_handle: Arc<Handle<Map>>,
+  map: Option<Map>,
   // map_handling
   map_scale: f32,
   mouse_pos: Vec2,
@@ -39,6 +42,8 @@ impl Editor {
       .insert(GlobalTransform::identity());
     commands.insert_resource(Self {
       runtime: Runtime::new(),
+      map_handle: Default::default(),
+      map: Default::default(),
       map_scale: 1.0,
       mouse_pos: Default::default(),
       drag_start_mouse_pos: Default::default(),
@@ -58,9 +63,9 @@ impl Editor {
     mut map_query: Query<(Entity, &mut Transform), With<MapAnchor>>,
   ) {
     let mut e = editor_res.deref_mut();
+    let (map_id, mut map_trans) = map_query.single_mut().unwrap();
     let window = windows.get_primary().unwrap();
     e.window_size = Vec2::new(window.width(), window.height());
-    let (map_id, mut map_trans) = map_query.single_mut().unwrap();
     // zoom map
     for event in mouse_wheel_events.iter() {
       e.map_scale += event.y / 5.0;
@@ -105,6 +110,7 @@ impl Editor {
           ui.label("Open Scene");
           ui.indent("Open Source", |ui| {
             if ui.button("Chapter 01").clicked() {
+              e.load_scenario("../taiju/assets/scenario/stage01.ron");
             }
           });
           ui.separator();
@@ -132,9 +138,71 @@ impl Editor {
       ui.spacing_mut().slider_width = ui.available_width();
       ui.add(egui::Slider::new(&mut e.current_time, range.clone()).show_value(false).smart_aim(true));
    });
-  
+  }
+  pub(crate) fn reload_map(
+    mut editor_res: ResMut<Editor>,
+    mut map_query: Query<(Entity, &mut Transform), With<MapAnchor>>,
+    mut commands: Commands,
+    mut enemy_server: ResMut<EnemyServer>,
+  ) {
+    let mut e = editor_res.deref_mut();
+    if let Some(map) = e.map_handle.poll() {
+      e.map = Some(map);
+    } else {
+      return;
+    }
+    { // remove old maps
+      let (map_id, mut map_trans) = map_query.single_mut().unwrap();
+      commands.entity(map_id).despawn_recursive();
+    }
+    let map = e.map.as_ref().unwrap();
+    let map_id =  commands
+      .spawn()
+      .insert(MapAnchor)
+      .insert(Transform::identity())
+      .insert(GlobalTransform::identity())
+      .id();
+    let mut map_entities = Vec::<Entity>::new();
+    {
+      let mut event_iter = map.scenario.events.iter();
+      let mut time :u32 = 0;
+      let mut event = event_iter.next();
+      for pos in map.timeline.pos.iter() {
+        if let Some((at, ev)) = event {
+          if *at == time {
+            for e in ev {
+              match e.clone() {
+                  Event::ChangeWitchSpeed(_) => {}
+                  Event::SpawnEnemy(desc) => {
+                    let mut spr = enemy_server.sprites[&desc.body].clone();
+                    spr.transform.translation.x = desc.position.x + pos.x;
+                    spr.transform.translation.y = desc.position.y + pos.y;
+                    let id = commands.spawn().insert_bundle(spr).id();
+                    map_entities.push(id);
+                  }
+              }
+            }
+            event = event_iter.next();
+          }
+        }
+        time += 1;
+      }
+    }
+    commands.entity(map_id).push_children(&map_entities);
   }
   pub(crate) fn mouse_in_map(&self) -> Vec2 {
     Vec2::new(self.mouse_pos.x, self.mouse_pos.y)
   }
+  pub(crate) fn load_scenario(&mut self, path: &str) {
+    let path = path.to_owned();
+    self.map_handle = self.runtime.spawn(async move {
+      let path = path;
+      let mut bytes = Vec::new();
+      File::open(path).unwrap().read_to_end(&mut bytes).unwrap();
+      let scenario = ron::from_str::<Scenario>(std::str::from_utf8(&bytes).unwrap()).unwrap();
+      let map = Map::load(scenario);
+      map
+    });
+  }
+
 }

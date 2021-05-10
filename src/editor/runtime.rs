@@ -12,9 +12,14 @@ pub(crate) struct Runtime {
 
 #[derive(Debug)]
 pub(crate) enum ExecState<T> {
+  None,
   Executing,
   Available(T),
   Done,
+}
+
+impl <T> Default for ExecState<T> {
+  fn default() -> Self { ExecState::None }
 }
 
 impl <T> ExecState<T> {
@@ -38,6 +43,7 @@ impl <T> ExecState<T> {
   }
 }
 
+#[derive(Debug, Default)]
 pub(crate) struct Handle <T> {
   state: RwLock<ExecState<T>>,
 }

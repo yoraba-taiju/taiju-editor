@@ -17,6 +17,7 @@ fn main() {
     .add_startup_system(editor::Editor::spawn.system())
     .add_system_to_stage(CoreStage::PreUpdate, editor::Editor::update_map.system())
     .add_system_to_stage(CoreStage::Update, editor::Editor::update_ui.system())
+    .add_system_to_stage(CoreStage::PostUpdate, editor::Editor::reload_map.system())
     .run();
 }
 

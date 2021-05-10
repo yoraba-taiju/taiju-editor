@@ -23,7 +23,7 @@ pub(crate) struct Editor {
   //
   window_size: Vec2,
   // 
-  menu_pos: Option<(f32, f32)>,
+  current_time: u32,
 }
 
 impl Editor {
@@ -44,7 +44,7 @@ impl Editor {
       drag_start_mouse_pos: Default::default(),
       drag_start_map_pos: Default::default(),
       window_size: Vec2::new(window.width(), window.height()),
-      menu_pos: Default::default(),
+      current_time: 0,
     });
   }
   pub(crate) fn update_map(
@@ -99,33 +99,6 @@ impl Editor {
     mut editor_res: ResMut<Editor>,
   ) {
     let e = editor_res.deref_mut();
-    let input: &egui::InputState = egui_ctx.ctx().input();
-    for ev in input.events.iter() {
-      match ev {
-        &Event::Copy => {}
-        &Event::Cut => {}
-        Event::Text(str) => {}
-        &Event::Key {
-          key: Key,
-          pressed: bool,
-          modifiers: Modifiers,
-        } => {}
-        &Event::PointerMoved(pos) => {}
-        &Event::PointerButton {
-          pos,
-          button,
-          pressed,
-          modifiers,
-        } => {
-          if button == egui::PointerButton::Secondary {
-            if pressed {
-              e.menu_pos = Some((pos.x, pos.y));
-            }
-          }
-        }
-        &Event::PointerGone => {}
-      }
-    }
     egui::TopPanel::top("top_panel").show(egui_ctx.ctx(), |ui| {
       egui::menu::bar(ui, |ui| {
         egui::menu::menu(ui, "File", |ui| {
@@ -144,17 +117,22 @@ impl Editor {
         });
       });
     });
+    egui::SidePanel::left("timeline_side_panel", 200.0).show(egui_ctx.ctx(), |ui| {
+      ui.heading("Timeline");
+    });
+    egui::SidePanel::left("edit_side_panel", 200.0).show(egui_ctx.ctx(), |ui| {
+      ui.heading("Edit event");
+    });
+    egui::TopPanel::top("scroll_bar").show(egui_ctx.ctx(), |ui| {
+      let range = 0..=100;
+      ui.horizontal(|ui| {
+        ui.label("Time: ");
+        ui.add(egui::DragValue::new(&mut e.current_time).speed(1).clamp_range(range.clone()));
+      });
+      ui.spacing_mut().slider_width = ui.available_width();
+      ui.add(egui::Slider::new(&mut e.current_time, range.clone()).show_value(false).smart_aim(true));
+   });
   
-    /*
-    let mut open = true;
-    if let Some(pos) = e.menu_pos {
-      egui::Window::new("Hello")
-        .open(&mut open)
-        .default_pos(pos)
-        .show(egui_ctx.ctx(), |ui| {
-          ui.label("world");
-        });
-    }*/
   }
   pub(crate) fn mouse_in_map(&self) -> Vec2 {
     Vec2::new(self.mouse_pos.x, self.mouse_pos.y)

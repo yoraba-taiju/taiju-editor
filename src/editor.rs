@@ -117,12 +117,11 @@ impl Editor {
           pressed,
           modifiers,
         } => {
-          /*
           if button == egui::PointerButton::Secondary {
             if pressed {
               e.menu_pos = Some((pos.x, pos.y));
             }
-          }*/
+          }
         }
         &Event::PointerGone => {}
       }

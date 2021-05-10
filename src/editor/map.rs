@@ -10,11 +10,10 @@ pub(crate) struct Map {
 
 impl Map {
   pub(crate) fn load(scenario: Scenario) -> Self {
+    let timeline = Timeline::from(&scenario);
     Self {
       scenario,
-      timeline: Timeline::new(),
+      timeline,
     }
-  }
-  pub(crate) fn process_events(&self) {
   }
 }

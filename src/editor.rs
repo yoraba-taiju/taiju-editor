@@ -12,6 +12,7 @@ use runtime::{Runtime, Handle};
 use map::Map;
 
 pub struct MapAnchor;
+pub struct FrameAnchor;
 
 pub(crate) struct Editor {
   runtime: Runtime,
@@ -98,6 +99,19 @@ impl Editor {
       let id = commands.spawn().insert_bundle(spr).id();
       commands.entity(map_id).push_children(&[id]);
     }
+  }
+  pub(crate) fn update_frame (
+    mut editor_res: ResMut<Editor>,
+    mut frame_query: Query<&mut Transform, With<FrameAnchor>>,
+  ) {
+    let e = editor_res.deref_mut();
+    if e.map.is_none() {
+      return;
+    }
+    let mut frame_transform = frame_query.single_mut().unwrap();
+    let pos = e.map.as_ref().unwrap().timeline.pos[e.current_time as usize];
+    frame_transform.translation.x = pos.x;
+    frame_transform.translation.y = pos.y;
   }
   pub(crate) fn update_ui (
     egui_ctx: Res<EguiContext>,
@@ -198,6 +212,16 @@ impl Editor {
         }
       }
     }
+    {
+      let id = commands.spawn().insert_bundle(SpriteBundle{
+        sprite: Sprite::new(Vec2::new(1920.0, 1080.0)),
+        material: color_materials.add(Color::rgba(1.0, 0.5, 0.5, 0.5).into()),
+        transform: Transform::from_xyz(0.0, 0.0, 0.0),
+        ..Default::default()
+      }).insert(FrameAnchor).id();
+      map_entities.push(id);
+    }
+
     commands.entity(map_id).push_children(&map_entities);
   }
   pub(crate) fn mouse_in_map(&self) -> Vec2 {

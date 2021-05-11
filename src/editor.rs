@@ -125,9 +125,11 @@ impl Editor {
     });
     egui::SidePanel::left("timeline_side_panel", 200.0).show(egui_ctx.ctx(), |ui| {
       ui.heading("Timeline");
+      ui.separator();
     });
     egui::SidePanel::left("edit_side_panel", 200.0).show(egui_ctx.ctx(), |ui| {
-      ui.heading("Edit event");
+      ui.heading("Edit Event/Object");
+      ui.separator();
     });
     egui::TopPanel::top("scroll_bar").show(egui_ctx.ctx(), |ui| {
       let range = 0..=100;

@@ -33,6 +33,9 @@ impl Timeline {
       }
     }
   }
+  pub(crate) fn len(&self) -> usize {
+    self.pos.len()
+  }
 }
 
 fn move_pos_by_motion(pos: &Vec2, motion: &Motion) -> Vec2 {

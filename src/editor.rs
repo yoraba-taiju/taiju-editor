@@ -132,7 +132,13 @@ impl Editor {
       ui.separator();
     });
     egui::TopPanel::top("scroll_bar").show(egui_ctx.ctx(), |ui| {
-      let range = 0..=100;
+      let range = {
+        if let Some(map) = e.map.as_ref() {
+          0..=(map.timeline.len()-1) as u32
+        } else {
+          0..=100
+        }
+      };
       ui.horizontal(|ui| {
         ui.label("Time: ");
         ui.add(egui::DragValue::new(&mut e.current_time).speed(1).clamp_range(range.clone()));
@@ -146,6 +152,7 @@ impl Editor {
     mut map_query: Query<(Entity, &mut Transform), With<MapAnchor>>,
     mut commands: Commands,
     mut enemy_server: ResMut<EnemyServer>,
+    mut color_materials: ResMut<Assets<ColorMaterial>>,
   ) {
     let mut e = editor_res.deref_mut();
     if let Some(map) = e.map_handle.poll() {
@@ -166,28 +173,29 @@ impl Editor {
       .id();
     let mut map_entities = Vec::<Entity>::new();
     {
-      let mut event_iter = map.scenario.events.iter();
-      let mut time :u32 = 0;
-      let mut event = event_iter.next();
-      for pos in map.timeline.pos.iter() {
-        if let Some((at, ev)) = event {
-          if *at == time {
-            for e in ev {
-              match e.clone() {
-                  Event::ChangeWitchSpeed(_) => {}
-                  Event::SpawnEnemy(desc) => {
-                    let mut spr = enemy_server.sprites[&desc.body].clone();
-                    spr.transform.translation.x = desc.position.x + pos.x;
-                    spr.transform.translation.y = desc.position.y + pos.y;
-                    let id = commands.spawn().insert_bundle(spr).id();
-                    map_entities.push(id);
-                  }
+      for (at, events) in map.scenario.events.iter() {
+        let pos = map.timeline.pos[*at as usize];
+        {
+          let id = commands.spawn().insert_bundle(SpriteBundle{
+            sprite: Sprite::new(Vec2::new(1920.0, 1080.0)),
+            material: color_materials.add(Color::rgba(0.5, 0.5, 1.0, 0.5).into()),
+            transform: Transform::from_xyz(pos.x, pos.y, 0.0),
+            ..Default::default()
+          }).id();
+          map_entities.push(id);
+        }
+        for e in events {
+          match e.clone() {
+              Event::ChangeWitchSpeed(_) => {}
+              Event::SpawnEnemy(desc) => {
+                let mut spr = enemy_server.sprites[&desc.body].clone();
+                spr.transform.translation.x = desc.position.x + pos.x;
+                spr.transform.translation.y = desc.position.y + pos.y;
+                let id = commands.spawn().insert_bundle(spr).id();
+                map_entities.push(id);
               }
-            }
-            event = event_iter.next();
           }
         }
-        time += 1;
       }
     }
     commands.entity(map_id).push_children(&map_entities);

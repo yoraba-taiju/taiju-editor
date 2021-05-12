@@ -122,11 +122,9 @@ impl Editor {
       egui::menu::bar(ui, |ui| {
         egui::menu::menu(ui, "File", |ui| {
           ui.label("Open Scene");
-          ui.indent("Open Source", |ui| {
-            if ui.button("Chapter 01").clicked() {
-              e.load_scenario("../taiju/assets/scenario/stage01.ron");
-            }
-          });
+          if ui.button("Chapter 01").clicked() {
+            e.load_scenario("../taiju/assets/scenario/stage01.ron");
+          }
           ui.separator();
           if ui.button("Save Scene").clicked() {
           }

@@ -25,9 +25,9 @@ impl Timeline {
         pos = move_pos_by_motion(&pos, &motion);
         self.pos.push(pos);
       }
-      for ev in events {
+      for ev in events.iter() {
         match ev {
-          Event::ChangeWitchSpeed(next) => { motion = *next; }
+          Event::ChangeWitchSpeed(next) => { motion = next.clone(); }
           Event::SpawnEnemy(_desc) => {}
         }
       }

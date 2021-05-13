@@ -196,7 +196,7 @@ impl Editor {
           }).id();
           map_entities.push(id);
         }
-        for e in events {
+        for e in events.iter() {
           match e.clone() {
               Event::ChangeWitchSpeed(_) => {}
               Event::SpawnEnemy(desc) => {

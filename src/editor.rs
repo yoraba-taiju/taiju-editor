@@ -28,6 +28,8 @@ pub(crate) struct Editor {
   window_size: Vec2,
   // 
   current_time: u32,
+  left_pressed_time: f32,
+  right_pressed_time: f32,
 }
 
 impl Editor {
@@ -51,12 +53,16 @@ impl Editor {
       drag_start_map_pos: Default::default(),
       window_size: Vec2::new(window.width(), window.height()),
       current_time: 0,
+      left_pressed_time: 0.0,
+      right_pressed_time: 0.0,
     });
   }
   pub(crate) fn update_map(
     mut editor_res: ResMut<Editor>,
     mut commands: Commands,
+    time: Res<Time>,
     windows: Res<Windows>,
+    keyboard_input: Res<Input<KeyCode>>,
     mouse_button_input: Res<Input<MouseButton>>,
     mut mouse_wheel_events: EventReader<MouseWheel>,
     mut cursor_moved_events: EventReader<CursorMoved>,
@@ -88,6 +94,30 @@ impl Editor {
     } else if mouse_button_input.pressed(MouseButton::Middle) {
       map_trans.translation.x = e.drag_start_map_pos.x + (e.mouse_pos.x - e.drag_start_mouse_pos.x);
       map_trans.translation.y = e.drag_start_map_pos.y + (e.mouse_pos.y - e.drag_start_mouse_pos.y);
+    }
+    // move frame
+    if let Some(map) = e.map.as_ref() {
+      if keyboard_input.just_pressed(KeyCode::Left) {
+        if e.current_time > 0 {
+          e.current_time -= 1;
+        }
+        e.left_pressed_time = 0.0;
+      }else if keyboard_input.pressed(KeyCode::Left) {
+        e.left_pressed_time += time.delta_seconds();
+        if e.left_pressed_time > 0.5 {
+          if e.current_time > 0 {
+            e.current_time -= 1;
+          }
+        }
+      }
+      if keyboard_input.just_pressed(KeyCode::Right) {
+        e.current_time = std::cmp::min((map.timeline.pos.len() as u32) - 1, e.current_time + 1);
+      } else if keyboard_input.pressed(KeyCode::Right) {
+        e.right_pressed_time += time.delta_seconds();
+        if e.right_pressed_time > 0.5 {
+          e.current_time = std::cmp::min((map.timeline.pos.len() as u32) - 1, e.current_time + 1);
+        }
+      }
     }
     // modify map
     if mouse_button_input.just_pressed(MouseButton::Right) {

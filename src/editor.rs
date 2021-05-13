@@ -70,8 +70,8 @@ impl Editor {
     // zoom map
     for event in mouse_wheel_events.iter() {
       e.map_scale += event.y / 5.0;
-      if e.map_scale < 0.2 {
-        e.map_scale = 0.2;
+      if e.map_scale < 0.1 {
+        e.map_scale = 0.1;
       }
       map_trans.scale.x = e.map_scale;
       map_trans.scale.y = e.map_scale;
@@ -95,9 +95,7 @@ impl Editor {
       let pt = (e.mouse_in_map() - e.window_size/2.0 - Vec2::new(map_trans.translation.x, map_trans.translation.y)) / e.map_scale;
       spr.transform.translation.x = pt.x;
       spr.transform.translation.y = pt.y;
-      // Parentを指定する方法だと駄目だった。バグ？
-      let id = commands.spawn().insert_bundle(spr).id();
-      commands.entity(map_id).push_children(&[id]);
+      commands.spawn().insert(Parent(map_id)).insert_bundle(spr).id();
     }
   }
   pub(crate) fn update_frame (

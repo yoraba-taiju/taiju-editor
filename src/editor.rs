@@ -97,9 +97,11 @@ impl Editor {
     }
     // move frame
     if let Some(map) = e.map.as_ref() {
+      let mut changed = false;
       if keyboard_input.just_pressed(KeyCode::Left) {
         if e.current_time > 0 {
           e.current_time -= 1;
+          changed = true;
         }
         e.left_pressed_time = 0.0;
       }else if keyboard_input.pressed(KeyCode::Left) {
@@ -107,16 +109,24 @@ impl Editor {
         if e.left_pressed_time > 0.5 {
           if e.current_time > 0 {
             e.current_time -= 1;
+            changed = true;
           }
         }
       }
       if keyboard_input.just_pressed(KeyCode::Right) {
         e.current_time = std::cmp::min((map.timeline.pos.len() as u32) - 1, e.current_time + 1);
+        changed = true;
       } else if keyboard_input.pressed(KeyCode::Right) {
         e.right_pressed_time += time.delta_seconds();
         if e.right_pressed_time > 0.5 {
           e.current_time = std::cmp::min((map.timeline.pos.len() as u32) - 1, e.current_time + 1);
+          changed = true;
         }
+      }
+      if changed {
+        let pos = map.timeline.pos[e.current_time as usize];
+        map_trans.translation.x = (-pos.x) * e.map_scale;
+        map_trans.translation.y = (-pos.y) * e.map_scale;
       }
     }
     // modify map

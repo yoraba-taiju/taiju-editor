@@ -9,7 +9,7 @@ pub fn move_map(
 ) {
   let (_, mut map_trans) = map_query.single_mut().unwrap();
   for event in mouse_wheel_events.iter() {
-    map_state.scale += event.y / 10.0;
+    map_state.scale += event.y / 20.0;
     if map_state.scale < 0.1 {
       map_state.scale = 0.1;
     }

@@ -65,9 +65,9 @@ pub fn display_ui(
 
 pub fn reload_map(
   mut map_state: ResMut<MapState>,
-  map_query: Query<(Entity), With<MapAnchor>>,
+  map_query: Query<Entity, With<MapAnchor>>,
   mut commands: Commands,
-  mut enemy_server: ResMut<EnemyServer>,
+  enemy_server: Res<EnemyServer>,
   mut color_materials: ResMut<Assets<ColorMaterial>>,
 ) {
   if let Some(map) = map_state.handle.take() {

@@ -6,11 +6,13 @@ mod states;
 mod systems_egui;
 mod systems_window;
 mod systems_map;
+mod systems_map_reloading;
 pub use anchors::*;
 pub use states::*;
 pub use systems_egui::*;
 pub use systems_window::*;
 pub use systems_map::*;
+pub use systems_map_reloading::*;
 
 pub fn spawn_resources(
   mut commands: Commands,

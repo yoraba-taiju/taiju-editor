@@ -1,11 +1,10 @@
 mod states;
 
-use std::{fs::File, io::Read, ops::DerefMut, sync::Arc, usize};
 use bevy::{input::mouse::MouseWheel, prelude::*};
 use bevy_egui::{egui, EguiContext};
 use taiju::chapter::prelude::*;
-use super::runtime::{Runtime, Handle};
-use super::map::Map;
+use crate::runtime::Runtime;
+
 pub use states::*;
 
 pub struct MapAnchor;
@@ -121,19 +120,18 @@ pub fn update_current_frame(
 
 pub fn display_ui(
   egui_ctx: Res<EguiContext>,
+  runtime: Res<Runtime>,
   mut map_state: ResMut<MapState>,
   mut frame_state: ResMut<CurrentFrameState>,
   mut subwindow_state: ResMut<SubWindowState>,
 ) {
-  let map_opt = map_state.map.as_ref();
-
   let ctx = egui_ctx.ctx();
   egui::TopPanel::top("top_panel").show(ctx, |ui| {
     egui::menu::bar(ui, |ui| {
       egui::menu::menu(ui, "File", |ui| {
         ui.label("Open Scene");
         if ui.button("Chapter 01").clicked() {
-          //e.load_scenario("../taiju/assets/scenario/stage01.ron");
+          map_state.load_scenario(&runtime, "../taiju/assets/scenario/stage01.ron");
         }
         ui.separator();
         if ui.button("Save Scene").clicked() {
@@ -156,7 +154,7 @@ pub fn display_ui(
     .show(ctx, |ui| {
       { // show bar
         let range = {
-          if let Some(map) = map_opt {
+          if let Some(map) = map_state.map.as_ref() {
             0..=(map.timeline.len()-1) as u32
           } else {
             0..=100
@@ -257,17 +255,3 @@ pub fn reload_map(
   commands.entity(map_id).push_children(&map_entities);
 }
 
-/*
-pub fn load_scenario(path: &str
-) {
-  let path = path.to_owned();
-  self.map_handle = self.runtime.spawn(async move {
-    let path = path;
-    let mut bytes = Vec::new();
-    File::open(path).unwrap().read_to_end(&mut bytes).unwrap();
-    let scenario = ron::from_str::<Scenario>(std::str::from_utf8(&bytes).unwrap()).unwrap();
-    let map = Map::load(scenario);
-    map
-  });
-}
-*/

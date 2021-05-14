@@ -20,8 +20,8 @@ fn main() {
     .add_startup_system(editor::spawn_map_anchor.system())
     .add_system_to_stage(CoreStage::PreUpdate, editor::update_window_state.system())
     .add_system_to_stage(CoreStage::PreUpdate, editor::update_mouse_state.system())
-    .add_system_to_stage(CoreStage::PreUpdate, editor::update_map_trans.system())
-    .add_system_to_stage(CoreStage::PreUpdate, editor::update_current_frame.system())
+    .add_system_to_stage(CoreStage::PreUpdate, editor::move_map.system())
+    .add_system_to_stage(CoreStage::PreUpdate, editor::move_current_frame.system())
     
     .add_system_to_stage(CoreStage::Update, editor::display_ui.system())
     .add_system_to_stage(CoreStage::Update, editor::update_frame.system())

@@ -47,11 +47,11 @@ pub fn move_current_frame(
     }
   }
   if keyboard_input.pressed(KeyCode::Right) {
-    frame_state.current_time = std::cmp::min((map.timeline.pos.len() as u32) - 1, frame_state.current_time + 1);
+    frame_state.current_time = std::cmp::min(map.duration as u32, frame_state.current_time + 1);
     changed = true;
   }
   if changed {
-    let pos = map.timeline.pos[frame_state.current_time as usize];
+    let pos = map.pos[frame_state.current_time as usize];
     map_state.pos.x = (-pos.x) * map_state.scale;
     map_state.pos.y = (-pos.y) * map_state.scale;
   }
@@ -68,7 +68,7 @@ pub fn update_frame (
     return;
   };
   let mut frame_trans = frame_query.single_mut().unwrap();
-  let pos = map.timeline.pos[frame_state.current_time as usize];
+  let pos = map.pos[frame_state.current_time as usize];
   frame_trans.translation.x = pos.x;
   frame_trans.translation.y = pos.y;
 }

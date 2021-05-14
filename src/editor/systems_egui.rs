@@ -42,7 +42,7 @@ pub fn display_ui(
       { // show bar
         let range = {
           if let Some(map) = map_state.map.as_ref() {
-            0..=(map.timeline.len()-1) as u32
+            0..=(map.duration as u32)
           } else {
             0..=100
           }
@@ -88,27 +88,24 @@ pub fn reload_map(
     .id();
   let mut map_entities = Vec::<Entity>::new();
   {
-    for (at, events) in map.scenario.events.iter() {
-      let pos = map.timeline.pos[*at as usize];
-      {
-        let id = commands.spawn().insert_bundle(SpriteBundle{
-          sprite: Sprite::new(Vec2::new(1920.0, 1080.0)),
-          material: color_materials.add(Color::rgba(0.5, 0.5, 1.0, 0.5).into()),
-          transform: Transform::from_xyz(pos.x, pos.y, 0.0),
-          ..Default::default()
-        }).id();
-        map_entities.push(id);
-      }
-      for e in events.iter() {
-        match e.clone() {
-            Event::ChangeWitchSpeed(_) => {}
-            Event::SpawnEnemy(desc) => {
-              let mut spr = enemy_server.sprites[&desc.body].clone();
-              spr.transform.translation.x = desc.position.x + pos.x;
-              spr.transform.translation.y = desc.position.y + pos.y;
-              let id = commands.spawn().insert_bundle(spr).id();
-              map_entities.push(id);
-            }
+    for at in 0..=map.duration {
+      let pos = map.pos[at];
+      if let Some(enemies) = map.enemies.get(&(at as u32)) {
+        {
+          let id = commands.spawn().insert_bundle(SpriteBundle{
+            sprite: Sprite::new(Vec2::new(1920.0, 1080.0)),
+            material: color_materials.add(Color::rgba(0.5, 0.5, 1.0, 0.5).into()),
+            transform: Transform::from_xyz(pos.x, pos.y, 0.0),
+            ..Default::default()
+          }).id();
+          map_entities.push(id);
+        }
+        for desc in enemies.iter() {
+          let mut spr = enemy_server.sprites[&desc.body].clone();
+          spr.transform.translation.x = desc.position.x + pos.x;
+          spr.transform.translation.y = desc.position.y + pos.y;
+          let id = commands.spawn().insert_bundle(spr).id();
+          map_entities.push(id);
         }
       }
     }

@@ -4,6 +4,8 @@ use taiju::chapter::prelude::*;
 use taiju::donut::Clock;
 
 mod editor;
+mod map;
+mod runtime;
 
 fn main() {
   std::env::set_var("CARGO_MANIFEST_DIR", std::env::current_dir().expect("No current dir??").join("..").join("taiju"));

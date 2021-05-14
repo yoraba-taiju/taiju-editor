@@ -1,45 +1,15 @@
-mod map;
-mod runtime;
+mod states;
 
 use std::{fs::File, io::Read, ops::DerefMut, sync::Arc, usize};
 use bevy::{input::mouse::MouseWheel, prelude::*};
 use bevy_egui::{egui, EguiContext};
 use taiju::chapter::prelude::*;
-use runtime::{Runtime, Handle};
-use map::Map;
+use super::runtime::{Runtime, Handle};
+use super::map::Map;
+pub use states::*;
 
 pub struct MapAnchor;
 pub struct FrameAnchor;
-
-#[derive(Debug, Default)]
-pub struct WindowState{
-  size: Vec2,
-}
-
-#[derive(Debug, Default)]
-pub struct MapState {
-  handle: Arc<Handle<Map>>,
-  map: Option<Map>,
-  scale: f32,
-  pos: Vec2,
-  drag_origin: Option<Vec2>,
-}
-#[derive(Debug, Default)]
-pub struct CurrentFrameState {
-  current_time: u32,
-}
-
-#[derive(Debug, Default)]
-pub struct MouseState {
-  pos: Vec2,
-  drag_origin: Option<Vec2>,
-}
-
-#[derive(Debug, Default)]
-pub struct SubWindowState {
-  open_timeline_window: bool,
-  open_editor_window: bool,
-}
 
 pub fn spawn_resources(
   mut commands: Commands,

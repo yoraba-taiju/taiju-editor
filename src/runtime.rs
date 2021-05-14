@@ -2,12 +2,12 @@ use bevy::prelude::*;
 use bevy::tasks::{TaskPool, TaskPoolBuilder};
 use std::{future::Future, ops::DerefMut, sync::{Arc, RwLock}};
 
-pub(crate) struct Runtime {
-  pub(crate) task_pool: TaskPool,
+pub struct Runtime {
+  pub task_pool: TaskPool,
 }
 
 #[derive(Debug)]
-pub(crate) enum ExecState<T> {
+pub enum ExecState<T> {
   None,
   Executing,
   Available(T),
@@ -19,19 +19,19 @@ impl <T> Default for ExecState<T> {
 }
 
 impl <T> ExecState<T> {
-  pub(crate) fn is_executing(&self) -> bool {
+  pub fn is_executing(&self) -> bool {
     match self {
       &ExecState::Executing => true,
       _ => false
     }
   }
-  pub(crate) fn is_done(&self) -> bool {
+  pub fn is_done(&self) -> bool {
     match self {
       &ExecState::Done => true,
       _ => false
     }
   }
-  pub(crate) fn is_available(&self) -> bool {
+  pub fn is_available(&self) -> bool {
     match self {
       &ExecState::Available(_) => true,
       _ => false
@@ -40,12 +40,12 @@ impl <T> ExecState<T> {
 }
 
 #[derive(Debug, Default)]
-pub(crate) struct Handle <T> {
+pub struct Handle <T> {
   state: RwLock<ExecState<T>>,
 }
 
 impl <T> Handle<T> {
-  pub(crate) fn take(&self) -> Option<T> {
+  pub fn take(&self) -> Option<T> {
     let mut state = self.state.write().unwrap();
     if state.is_executing() {
       return None;
@@ -61,12 +61,12 @@ impl <T> Handle<T> {
 }
 
 impl Runtime {
-  pub(crate) fn new() -> Self {
+  pub fn new() -> Self {
     Self {
       task_pool: TaskPoolBuilder::new().build(),
     }
   }
-  pub(crate) fn spawn<T:'static + Sync + Send>(&self, future: impl Future<Output = T> + Send + 'static) -> Arc<Handle<T>>
+  pub fn spawn<T:'static + Sync + Send>(&self, future: impl Future<Output = T> + Send + 'static) -> Arc<Handle<T>>
   {
     let handle = Arc::new(Handle{
       state: RwLock::new(ExecState::Executing),

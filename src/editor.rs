@@ -75,15 +75,16 @@ pub fn update_map_trans(
       map_state.scale = 0.1;
     }
   }
-  map_trans.scale.x = map_state.scale;
-  map_trans.scale.y = map_state.scale;
-  map_trans.scale.z = map_state.scale;
   if let Some(start) = mouse_state.drag_origin {
     let delta = mouse_state.pos - start;
     if let Some(start) = map_state.drag_origin {
       map_state.pos = start + delta;
     }
   }
+  // Write down all states to map_trans
+  map_trans.scale.x = map_state.scale;
+  map_trans.scale.y = map_state.scale;
+  map_trans.scale.z = map_state.scale;
   map_trans.translation.x = map_state.pos.x;
   map_trans.translation.y = map_state.pos.y;
 }

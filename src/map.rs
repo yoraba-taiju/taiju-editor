@@ -17,4 +17,7 @@ impl Map {
       timeline,
     }
   }
+  pub fn compile() -> Scenario {
+    todo!("todo!")
+  }
 }

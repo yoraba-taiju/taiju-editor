@@ -57,6 +57,7 @@ pub fn update_mouse_state(
     map_state.drag_origin = Some(map_state.pos);
   }
   if mouse_button_input.just_released(MouseButton::Middle) {
+    mosue_state.drag_origin = None;
     map_state.drag_origin = None;
   }
 }
@@ -67,19 +68,19 @@ pub fn update_map_trans(
   mut mouse_wheel_events: EventReader<MouseWheel>,
   mut map_query: Query<(Entity, &mut Transform), With<MapAnchor>>,
 ) {
-  let (map_id, mut map_trans) = map_query.single_mut().unwrap();
+  let (_, mut map_trans) = map_query.single_mut().unwrap();
   for event in mouse_wheel_events.iter() {
-    map_state.scale += event.y / 5.0;
+    map_state.scale += event.y / 10.0;
     if map_state.scale < 0.1 {
       map_state.scale = 0.1;
     }
-    map_trans.scale.x = map_state.scale;
-    map_trans.scale.y = map_state.scale;
-    map_trans.scale.z = map_state.scale;
   }
+  map_trans.scale.x = map_state.scale;
+  map_trans.scale.y = map_state.scale;
+  map_trans.scale.z = map_state.scale;
   if let Some(start) = mouse_state.drag_origin {
     let delta = mouse_state.pos - start;
-    if let Some(start) = mouse_state.drag_origin {
+    if let Some(start) = map_state.drag_origin {
       map_state.pos = start + delta;
     }
   }
@@ -91,9 +92,7 @@ pub fn update_current_frame(
   keyboard_input: Res<Input<KeyCode>>,
   mut map_state: ResMut<MapState>,
   mut frame_state: ResMut<CurrentFrameState>,
-  mut map_query: Query<(Entity, &mut Transform), With<MapAnchor>>,
 ) {
-  let (map_id, mut map_trans) = map_query.single_mut().unwrap();
   let map = if let Some(map) = map_state.map.as_ref() {
     map
   } else {

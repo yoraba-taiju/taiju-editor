@@ -10,13 +10,25 @@ pub struct WindowState{
   pub size: Vec2,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct MapState {
   pub handle: Arc<Handle<Map>>,
   pub map: Option<Map>,
   pub scale: f32,
   pub pos: Vec2,
   pub drag_origin: Option<Vec2>,
+}
+
+impl Default for MapState {
+    fn default() -> Self {
+        Self {
+          handle: Default::default(),
+          map: Default::default(),
+          scale: 0.25,
+          pos: Vec2::ZERO,
+          drag_origin: Default::default(),
+        }
+    }
 }
 
 impl MapState {

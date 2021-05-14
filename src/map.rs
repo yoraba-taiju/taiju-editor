@@ -21,7 +21,7 @@ impl Map {
     map.update_pos();
     map
   }
-  pub fn load_events(&mut self, scenario: &Scenario) {
+  fn load_events(&mut self, scenario: &Scenario) {
     for (at, events) in scenario.events.iter() {
       self.duration = std::cmp::max(self.duration, *at as usize);
       let mut enemies = Vec::<EnemyDescription>::new();

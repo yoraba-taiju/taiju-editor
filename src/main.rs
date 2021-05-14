@@ -25,6 +25,7 @@ fn main() {
     
     .add_system_to_stage(CoreStage::Update, editor::display_ui.system())
     .add_system_to_stage(CoreStage::Update, editor::update_frame.system())
+
     .add_system_to_stage(CoreStage::PostUpdate, editor::reload_map.system())
     .run();
 }

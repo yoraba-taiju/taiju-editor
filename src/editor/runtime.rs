@@ -1,10 +1,6 @@
 use bevy::prelude::*;
 use bevy::tasks::{TaskPool, TaskPoolBuilder};
-use std::{
-  future::Future,
-  ops::{DerefMut},
-  sync::{Arc, RwLock}
-};
+use std::{future::Future, ops::DerefMut, sync::{Arc, RwLock}};
 
 pub(crate) struct Runtime {
   pub(crate) task_pool: TaskPool,
@@ -49,7 +45,7 @@ pub(crate) struct Handle <T> {
 }
 
 impl <T> Handle<T> {
-  pub(crate) fn poll(&self) -> Option<T> {
+  pub(crate) fn take(&self) -> Option<T> {
     let mut state = self.state.write().unwrap();
     if state.is_executing() {
       return None;
@@ -103,11 +99,11 @@ mod test {
     let result = {
       let mut r: Option<String> = None;
       while r.is_none() {
-        r = task.poll();
+        r = task.take();
       }
       r
     };
     assert_eq!(Some("".to_string()), result);
-    assert_eq!(None, task.poll());
+    assert_eq!(None, task.take());
   }
 }

@@ -71,9 +71,8 @@ impl TriangleStripBuilder {
     self
   }
   pub fn build(self, meshes: &mut ResMut<Assets<Mesh>>) -> TriangleBundle {
-    let mut indicies: Vec<u32> = (0..self.points.len() as u32).collect();
     let mut mesh = Mesh::new(PrimitiveTopology::TriangleStrip);
-    mesh.set_indices(Some(Indices::U32(indicies)));
+    mesh.set_indices(Some(Indices::U32(self.indecies)));
     mesh.set_attribute(Mesh::ATTRIBUTE_POSITION, self.points);
     mesh.set_attribute(Mesh::ATTRIBUTE_COLOR, self.colors);
 
@@ -130,9 +129,8 @@ impl TriangleListBuilder {
     self
   }
   pub fn build(self, meshes: &mut ResMut<Assets<Mesh>>) -> TriangleBundle {
-    let mut indicies: Vec<u32> = (0..self.points.len() as u32).collect();
     let mut mesh = Mesh::new(PrimitiveTopology::TriangleStrip);
-    mesh.set_indices(Some(Indices::U32(indicies)));
+    mesh.set_indices(Some(Indices::U32(self.indecies)));
     mesh.set_attribute(Mesh::ATTRIBUTE_POSITION, self.points);
     mesh.set_attribute(Mesh::ATTRIBUTE_COLOR, self.colors);
 

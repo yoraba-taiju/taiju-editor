@@ -55,7 +55,8 @@ fn setup(
       .append(Vec3::new(-100.0, -100.0, 0.0))
       .append(Vec3::new(-100.0, 100.0, 0.0))
       .append(Vec3::new( 100.0, 100.0, 0.0))
-      .push_indices(&[0, 1, 2])
+      .append(Vec3::new( 100.0, -100.0, 0.0))
+      .push_indices(&[1, 2, 0, 3])
       .build(&mut meshes));
 
 }

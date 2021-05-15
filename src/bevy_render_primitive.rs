@@ -83,13 +83,13 @@ impl LineStripBuilder {
   }
 }
 
-pub struct LinesBuilder {
+pub struct LineListBuilder {
   points: Vec<[f32; 3]>,
   colors: Vec<[f32; 3]>,
 }
 
 #[allow(dead_code)]
-impl LinesBuilder {
+impl LineListBuilder {
   pub fn new() -> Self {
     Self {
       points: Default::default(),

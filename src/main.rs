@@ -8,7 +8,6 @@ mod editor;
 mod map;
 mod runtime;
 mod bevy_render_primitive;
-mod test;
 
 fn main() {
   std::env::set_var("CARGO_MANIFEST_DIR", std::env::current_dir().expect("No current dir??").join("..").join("taiju"));

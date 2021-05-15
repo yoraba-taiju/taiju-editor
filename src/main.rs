@@ -17,11 +17,11 @@ fn main() {
     .add_plugins(DefaultPlugins)
     .add_plugin(EguiPlugin)
     .add_plugin(StagePlugin)
-//    .add_plugin(bevy_render_primitive::PrimitiveRendererPlugin)
-    .add_plugin(test::TestPlugin)
+    .add_plugin(bevy_render_primitive::PrimitiveRendererPlugin)
+//    .add_plugin(test::TestPlugin)
     .insert_resource(Clock::new())
     .add_startup_system(setup.system())
-    .add_startup_system(test::setup.system())
+//    .add_startup_system(test::setup.system())
     .add_startup_system(editor::spawn_resources.system())
     .add_startup_system(editor::spawn_map_anchor.system())
     .add_system_to_stage(CoreStage::PreUpdate, editor::update_window_state.system())
@@ -32,7 +32,6 @@ fn main() {
     .add_system_to_stage(CoreStage::Update, editor::display_ui.system())
     .add_system_to_stage(CoreStage::Update, editor::update_frame.system())
     .add_system_to_stage(CoreStage::Update, editor::click_enemy.system())
-    .add_system_to_stage(CoreStage::Update, test::animate_shader.system())
 
     .add_system_to_stage(CoreStage::PostUpdate, editor::reload_map.system())
     .run();
@@ -53,12 +52,12 @@ fn setup(
   commands.spawn_bundle(OrthographicCameraBundle::new_2d()).insert(CameraAnchor);
   commands.spawn_bundle(UiCameraBundle::default());
 
-/*  commands.spawn_bundle(
+  commands.spawn_bundle(
     bevy_render_primitive::LineStripBuilder::new_loop()
-      .append(Vec3::new(-100.0, 100.0, 0.0))
       .append(Vec3::new(-100.0, -100.0, 0.0))
-      .append(Vec3::new( 100.0, -100.0, 0.0))
+      .append(Vec3::new(-100.0, 100.0, 0.0))
       .append(Vec3::new( 100.0, 100.0, 0.0))
+      .append(Vec3::new( 100.0, -100.0, 0.0))
       .build(&mut meshes));
-*/
+
 }

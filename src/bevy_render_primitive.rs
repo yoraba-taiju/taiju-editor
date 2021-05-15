@@ -64,11 +64,11 @@ impl LineStripBuilder {
   }
 
   pub fn build(self, meshes: &mut ResMut<Assets<Mesh>>) -> LineBundle {
-    let mut indicies = (0..(self.points.len() as u32)).collect::<Vec<u32>>();
+    let mut indicies: Vec<u32> = (0..self.points.len() as u32).collect();
     if self.looped {
       indicies.push(0);
     }
-    let mut mesh = Mesh::new(PrimitiveTopology::LineList);
+    let mut mesh = Mesh::new(PrimitiveTopology::LineStrip);
     mesh.set_indices(Some(Indices::U32(indicies)));
     mesh.set_attribute(Mesh::ATTRIBUTE_POSITION, self.points);
     mesh.set_attribute(Mesh::ATTRIBUTE_COLOR, self.colors);
@@ -215,7 +215,7 @@ layout(set = 0, binding = 0) uniform CameraViewProj {
     mat4 ViewProj;
 };
 
-layout(set = 2, binding = 0) uniform Transform {
+layout(set = 1, binding = 0) uniform Transform {
     mat4 Model;
 };
 

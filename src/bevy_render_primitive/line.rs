@@ -26,9 +26,9 @@ impl Plugin for LinePlugin {
 
 pub struct LineStripBuilder {
   looped: bool,
-  default_color: Option<[f32; 3]>,
+  default_color: Option<[f32; 4]>,
   points: Vec<[f32; 3]>,
-  colors: Vec<[f32; 3]>,
+  colors: Vec<[f32; 4]>,
 }
 
 #[allow(dead_code)]
@@ -49,8 +49,8 @@ impl LineStripBuilder {
       colors: Default::default(),
     }
   }
-  pub fn set_default_color(mut self, color: Vec3) -> Self {
-    self.default_color = Some([color.x, color.y, color.z]);
+  pub fn set_default_color(mut self, color: Color) -> Self {
+    self.default_color = Some([color.r(), color.g(), color.b(), color.a()]);
     self
   }
   pub fn append(mut self, point: Vec3) -> Self {
@@ -58,7 +58,7 @@ impl LineStripBuilder {
     if let Some(default_color) = self.default_color {
       self.colors.push(default_color);
     } else if self.colors.is_empty() {
-      self.colors.push([1.0, 1.0, 1.0]);
+      self.colors.push([1.0, 1.0, 1.0, 1.0]);
     } else {
       let last = self.colors.last().unwrap().clone();
       self.colors.push(last);
@@ -66,9 +66,9 @@ impl LineStripBuilder {
     self
   }
 
-  pub fn append_with_color(mut self, point: Vec3, color: Vec3) -> Self {
+  pub fn append_with_color(mut self, point: Vec3, color: Color) -> Self {
     self.points.push([point.x, point.y, point.z]);
-    self.colors.push([color.x, color.y, color.z]);
+    self.colors.push([color.r(), color.g(), color.b(), color.a()]);
     self
   }
 
@@ -80,7 +80,7 @@ impl LineStripBuilder {
     let mut mesh = Mesh::new(PrimitiveTopology::LineStrip);
     mesh.set_indices(Some(Indices::U32(indicies)));
     mesh.set_attribute(Mesh::ATTRIBUTE_POSITION, self.points);
-    mesh.set_attribute(Mesh::ATTRIBUTE_COLOR, self.colors);
+    mesh.set_attribute("Vertex_ColorWithAlpha", self.colors);
 
     LineBundle {
       mesh: meshes.add(mesh),
@@ -93,9 +93,9 @@ impl LineStripBuilder {
 }
 
 pub struct LineListBuilder {
-  default_color: Option<[f32; 3]>,
+  default_color: Option<[f32; 4]>,
   points: Vec<[f32; 3]>,
-  colors: Vec<[f32; 3]>,
+  colors: Vec<[f32; 4]>,
 }
 
 #[allow(dead_code)]
@@ -107,8 +107,8 @@ impl LineListBuilder {
       colors: Default::default(),
     }
   }
-  pub fn set_default_color(mut self, color: Vec3) -> Self {
-    self.default_color = Some([color.x, color.y, color.z]);
+  pub fn set_default_color(mut self, color: Color) -> Self {
+    self.default_color = Some([color.r(), color.g(), color.b(), color.a()]);
     self
   }
 
@@ -119,8 +119,8 @@ impl LineListBuilder {
       self.colors.push(default_color);
       self.colors.push(default_color);
     } else if self.colors.is_empty() {
-      self.colors.push([1.0, 1.0, 1.0]);
-      self.colors.push([1.0, 1.0, 1.0]);
+      self.colors.push([1.0, 1.0, 1.0, 1.0]);
+      self.colors.push([1.0, 1.0, 1.0, 1.0]);
     } else {
       let last1 = self.colors[self.colors.len()-2];
       let last2 = self.colors[self.colors.len()-1];
@@ -129,11 +129,11 @@ impl LineListBuilder {
     }
     self
   }
-  pub fn append_with_color(mut self, from: Vec3, to: Vec3, color1: Vec3, color2: Vec3) -> Self {
+  pub fn append_with_color(mut self, from: Vec3, to: Vec3, color1: Color, color2: Color) -> Self {
     self.points.push([from.x, from.y, from.z]);
     self.points.push([to.x, to.y, to.z]);
-    self.colors.push([color1.x, color1.y, color1.z]);
-    self.colors.push([color2.x, color2.y, color2.z]);
+    self.colors.push([color1.r(), color1.g(), color1.b(), color1.a()]);
+    self.colors.push([color2.r(), color2.g(), color2.b(), color2.a()]);
     self
   }
   pub fn build(self, meshes: &mut ResMut<Assets<Mesh>>) -> LineBundle {
@@ -141,7 +141,7 @@ impl LineListBuilder {
     let mut mesh = Mesh::new(PrimitiveTopology::LineList);
     mesh.set_indices(Some(Indices::U32(indicies)));
     mesh.set_attribute(Mesh::ATTRIBUTE_POSITION, self.points);
-    mesh.set_attribute(Mesh::ATTRIBUTE_COLOR, self.colors);
+    mesh.set_attribute("Vertex_ColorWithAlpha", self.colors);
 
     LineBundle {
       mesh: meshes.add(mesh),
@@ -226,9 +226,9 @@ const VERT_SHADER: &'static str = r###"
 #version 450
 
 layout(location = 0) in vec3 Vertex_Position;
-layout(location = 1) in vec3 Vertex_Color;
+layout(location = 1) in vec4 Vertex_ColorWithAlpha;
 
-layout(location = 0) out vec3 v_Color;
+layout(location = 0) out vec4 v_Color;
 
 layout(set = 0, binding = 0) uniform CameraViewProj {
     mat4 ViewProj;
@@ -248,11 +248,11 @@ void main() {
 const FRAG_SHADER: &'static str = r###"
 #version 450
 
-layout(location = 0) in vec3 v_Color;
+layout(location = 0) in vec4 v_Color;
 
 layout(location = 0) out vec4 o_Target;
 
 void main() {
-  o_Target = vec4(v_Color, 1.0);
+  o_Target = v_Color;
 }
 "###;

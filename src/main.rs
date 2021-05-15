@@ -49,14 +49,4 @@ fn setup(
   commands.spawn_bundle(OrthographicCameraBundle::new_2d()).insert(CameraAnchor);
   commands.spawn_bundle(UiCameraBundle::default());
 
-  commands.spawn_bundle(
-    bevy_render_primitive::TriangleStripBuilder::new()
-      .set_default_color(Vec3::new(1.0, 0.0, 0.0))
-      .append(Vec3::new(-100.0, -100.0, 0.0))
-      .append(Vec3::new(-100.0, 100.0, 0.0))
-      .append(Vec3::new( 100.0, 100.0, 0.0))
-      .append(Vec3::new( 100.0, -100.0, 0.0))
-      .push_indices(&[1, 2, 0, 3])
-      .build(&mut meshes));
-
 }

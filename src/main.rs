@@ -18,6 +18,7 @@ fn main() {
     .add_plugin(EguiPlugin)
     .add_plugin(StagePlugin)
 //    .add_plugin(bevy_render_primitive::PrimitiveRendererPlugin)
+    .add_plugin(test::TestPlugin)
     .insert_resource(Clock::new())
     .add_startup_system(setup.system())
     .add_startup_system(test::setup.system())

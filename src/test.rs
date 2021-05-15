@@ -1,14 +1,4 @@
-use bevy::{
-  prelude::*,
-  reflect::TypeUuid,
-  render::{
-      mesh::shape,
-      pipeline::{PipelineDescriptor, RenderPipeline},
-      render_graph::{base, RenderGraph, RenderResourcesNode},
-      renderer::RenderResources,
-      shader::{ShaderStage, ShaderStages},
-  },
-};
+use bevy::{prelude::*, reflect::TypeUuid, render::{mesh::{self, Indices, shape}, pipeline::{PipelineDescriptor, RenderPipeline}, render_graph::{base, RenderGraph, RenderResourcesNode}, renderer::RenderResources, shader::{ShaderStage, ShaderStages}}};
 
 #[derive(RenderResources, Default, TypeUuid)]
 #[uuid = "463e4b8a-d555-4fc2-ba9f-4c880063ba92"]
@@ -61,38 +51,74 @@ void main() {
 }
 "#;
 
-pub fn setup(
-  mut commands: Commands,
-  mut pipelines: ResMut<Assets<PipelineDescriptor>>,
-  mut shaders: ResMut<Assets<Shader>>,
-  mut meshes: ResMut<Assets<Mesh>>,
-  mut render_graph: ResMut<RenderGraph>,
-) {
-  // Create a new shader pipeline.
-  let pipeline_handle = pipelines.add(PipelineDescriptor::default_config(ShaderStages {
+pub const TEST_PIPELINE_HANDLE: HandleUntyped =
+    HandleUntyped::weak_from_u64(PipelineDescriptor::TYPE_UUID, 6657636463977685992);
+#[derive(Debug)]
+pub struct TestPlugin;
+
+impl Plugin for TestPlugin {
+  fn build(&self, app: &mut AppBuilder) {
+    let world_cell = app.world_mut().cell();
+    let mut pipelines = world_cell
+      .get_resource_mut::<Assets<PipelineDescriptor>>()
+      .unwrap();
+    let mut shaders = world_cell.get_resource_mut::<Assets<Shader>>().unwrap();
+    let mut render_graph = world_cell.get_resource_mut::<RenderGraph>().unwrap();
+
+    // Create a new shader pipeline.
+    let pipeline = PipelineDescriptor::default_config(ShaderStages {
       vertex: shaders.add(Shader::from_glsl(ShaderStage::Vertex, VERTEX_SHADER)),
       fragment: Some(shaders.add(Shader::from_glsl(ShaderStage::Fragment, FRAGMENT_SHADER))),
-  }));
+    });
+    pipelines.set_untracked(TEST_PIPELINE_HANDLE,pipeline);
 
-  // Add a `RenderResourcesNode` to our `RenderGraph`. This will bind `TimeComponent` to our
-  // shader.
-  render_graph.add_system_node(
-      "time_uniform",
-      RenderResourcesNode::<TimeUniform>::new(true),
-  );
+    // Add a `RenderResourcesNode` to our `RenderGraph`. This will bind `TimeComponent` to our
+    // shader.
+    render_graph.add_system_node(
+        "time_uniform",
+        RenderResourcesNode::<TimeUniform>::new(true),
+    );
 
-  // Add a `RenderGraph` edge connecting our new "time_component" node to the main pass node. This
-  // ensures that "time_component" runs before the main pass.
-  render_graph
-      .add_node_edge("time_uniform", base::node::MAIN_PASS)
-      .unwrap();
+    // Add a `RenderGraph` edge connecting our new "time_component" node to the main pass node. This
+    // ensures that "time_component" runs before the main pass.
+    render_graph
+        .add_node_edge("time_uniform", base::node::MAIN_PASS)
+        .unwrap();
+
+  }
+}
+
+pub fn setup(
+  mut commands: Commands,
+  mut meshes: ResMut<Assets<Mesh>>,
+) {
+
+  let mut mesh = Mesh::new(bevy::render::pipeline::PrimitiveTopology::LineStrip);
+  mesh.set_indices(Some(Indices::U32(vec![0, 2, 1, 0, 3, 2])));
+  let vetexes: Vec<[f32; 3]> = vec![
+    [-2.5, -2.5, 0.0],
+    [-2.5, 2.5, 0.0],
+    [2.5, 2.5, 0.0],
+    [2.5, -2.5, 0.0],
+  ];
+  let uvs: Vec<[f32; 2]> = vec![
+    [0.0, 0.0],
+    [0.0, 1.0],
+    [1.0, 1.0],
+    [1.0, 0.0],
+  ];
+  mesh.set_attribute(Mesh::ATTRIBUTE_POSITION, vetexes);
+  mesh.set_attribute(Mesh::ATTRIBUTE_UV_0, uvs);
+  println!("{:?}", mesh);
+  //mesh = Mesh::from(shape::Quad::new(Vec2::new(5.0, 5.0)));
+  //println!("{:?}", mesh);
 
   // Spawn a quad and insert the `TimeComponent`.
   commands
       .spawn_bundle(MeshBundle {
-          mesh: meshes.add(Mesh::from(shape::Quad::new(Vec2::new(5.0, 5.0)))),
+          mesh: meshes.add(mesh),
           render_pipelines: RenderPipelines::from_pipelines(vec![RenderPipeline::new(
-              pipeline_handle,
+            TEST_PIPELINE_HANDLE.typed(),
           )]),
           transform: Transform::from_xyz(0.0, 0.0, 0.0),
           ..Default::default()

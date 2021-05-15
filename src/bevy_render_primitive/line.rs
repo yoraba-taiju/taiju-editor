@@ -19,7 +19,7 @@ impl Plugin for LinePlugin {
       .unwrap();
     let mut shaders = world_cell.get_resource_mut::<Assets<Shader>>().unwrap();
     //let mut meshes = world_cell.get_resource_mut::<Assets<Mesh>>().unwrap();
-    pipelines.set_untracked(LINES_PIPELINE_HANDLE,build_line_pipeline(&mut shaders, PrimitiveTopology::LineList));
+    pipelines.set_untracked(LINE_LIST_PIPELINE_HANDLE,build_line_pipeline(&mut shaders, PrimitiveTopology::LineList));
     pipelines.set_untracked(LINE_STRIP_PIPELINE_HANDLE,build_line_pipeline(&mut shaders, PrimitiveTopology::LineStrip));
   }
 }
@@ -127,7 +127,7 @@ impl LineListBuilder {
     LineBundle {
       mesh: meshes.add(mesh),
       render_pipelines: RenderPipelines::from_pipelines(vec![RenderPipeline::new(
-        LINES_PIPELINE_HANDLE.typed(),
+        LINE_LIST_PIPELINE_HANDLE.typed(),
       )]),
       ..Default::default()
     }
@@ -145,7 +145,7 @@ pub struct LineBundle {
   pub global_transform: GlobalTransform,
 }
 
-pub const LINES_PIPELINE_HANDLE: HandleUntyped =
+pub const LINE_LIST_PIPELINE_HANDLE: HandleUntyped =
     HandleUntyped::weak_from_u64(PipelineDescriptor::TYPE_UUID, 16566712244797685760);
 pub const LINE_STRIP_PIPELINE_HANDLE: HandleUntyped =
     HandleUntyped::weak_from_u64(PipelineDescriptor::TYPE_UUID, 6657636463977684992);

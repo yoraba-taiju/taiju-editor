@@ -1,4 +1,14 @@
-use bevy::{prelude::*, reflect::TypeUuid, render::{mesh::Indices, pipeline::*, render_graph::base::MainPass, shader::{ShaderStage, ShaderStages}, texture::TextureFormat}};
+use bevy::{
+  prelude::*,
+  reflect::TypeUuid,
+  render::{
+    mesh::Indices,
+    pipeline::*,
+    render_graph::base::MainPass,
+    shader::{ShaderStage, ShaderStages},
+    texture::TextureFormat
+  }
+};
 pub struct PrimitiveRendererPlugin;
 impl Plugin for PrimitiveRendererPlugin {
   fn build(&self, app: &mut AppBuilder) {
@@ -14,7 +24,6 @@ impl Plugin for PrimitiveRendererPlugin {
   }
 }
 
-#[derive(Debug)]
 pub struct LineStripBuilder {
   looped: bool,
   points: Vec<[f32; 3]>,
@@ -59,7 +68,6 @@ impl LineStripBuilder {
     if self.looped {
       indicies.push(0);
     }
-    println!("{:?}", self);
     let mut mesh = Mesh::new(PrimitiveTopology::LineList);
     mesh.set_indices(Some(Indices::U32(indicies)));
     mesh.set_attribute(Mesh::ATTRIBUTE_POSITION, self.points);
@@ -75,7 +83,6 @@ impl LineStripBuilder {
   }
 }
 
-#[derive(Debug)]
 pub struct LinesBuilder {
   points: Vec<[f32; 3]>,
   colors: Vec<[f32; 3]>,
@@ -205,17 +212,17 @@ layout(location = 1) in vec3 Vertex_Color;
 layout(location = 0) out vec3 v_Color;
 
 layout(set = 0, binding = 0) uniform CameraViewProj {
-  mat4 ViewProj;
+    mat4 ViewProj;
 };
 
 layout(set = 2, binding = 0) uniform Transform {
-  mat4 Model;
+    mat4 Model;
 };
 
 void main() {
-  v_Color = Vertex_Color;
-  vec3 position = Vertex_Position;
-  gl_Position = ViewProj * Model * vec4(position, 1.0);
+    v_Color = Vertex_Color;
+    vec3 position = Vertex_Position;
+    gl_Position = ViewProj * Model * vec4(position, 1.0);
 }
 "###;
 

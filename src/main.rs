@@ -16,7 +16,7 @@ fn main() {
     .add_plugins(DefaultPlugins)
     .add_plugin(EguiPlugin)
     .add_plugin(StagePlugin)
-    .add_plugin(bevy_render_primitive::PrimitiveRendererPlugin)
+    .add_plugin(bevy_render_primitive::PrimitivePlugin)
     .insert_resource(Clock::new())
     .add_startup_system(setup.system())
     .add_startup_system(editor::spawn_resources.system())
@@ -50,11 +50,12 @@ fn setup(
   commands.spawn_bundle(UiCameraBundle::default());
 
   commands.spawn_bundle(
-    bevy_render_primitive::LineStripBuilder::new_loop()
+    bevy_render_primitive::TriangleStripBuilder::new()
+      .set_default_color(Vec3::new(1.0, 0.0, 0.0))
       .append(Vec3::new(-100.0, -100.0, 0.0))
       .append(Vec3::new(-100.0, 100.0, 0.0))
       .append(Vec3::new( 100.0, 100.0, 0.0))
-      .append(Vec3::new( 100.0, -100.0, 0.0))
+      .push_indices(&[0, 1, 2])
       .build(&mut meshes));
 
 }

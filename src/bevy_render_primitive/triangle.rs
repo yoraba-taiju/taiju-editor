@@ -9,8 +9,8 @@ use bevy::{
     texture::TextureFormat
   }
 };
-pub struct LinePlugin;
-impl Plugin for LinePlugin {
+pub struct TrianglePlugin;
+impl Plugin for TrianglePlugin {
   fn build(&self, app: &mut AppBuilder) {
     //let mut world = app.world_mut();
     let world_cell = app.world_mut().cell();
@@ -19,32 +19,24 @@ impl Plugin for LinePlugin {
       .unwrap();
     let mut shaders = world_cell.get_resource_mut::<Assets<Shader>>().unwrap();
     //let mut meshes = world_cell.get_resource_mut::<Assets<Mesh>>().unwrap();
-    pipelines.set_untracked(LINE_LIST_PIPELINE_HANDLE,build_line_pipeline(&mut shaders, PrimitiveTopology::LineList));
-    pipelines.set_untracked(LINE_STRIP_PIPELINE_HANDLE,build_line_pipeline(&mut shaders, PrimitiveTopology::LineStrip));
+    pipelines.set_untracked(TRIANGLE_PIPELINE_HANDLE,build_line_pipeline(&mut shaders, PrimitiveTopology::TriangleList));
+    pipelines.set_untracked(TRIANGLE_STRIP_PIPELINE_HANDLE,build_line_pipeline(&mut shaders, PrimitiveTopology::LineStrip));
   }
 }
 
-pub struct LineStripBuilder {
-  looped: bool,
+pub struct TriangleStripBuilder {
   default_color: Option<[f32; 3]>,
+  indecies: Vec<u32>,
   points: Vec<[f32; 3]>,
   colors: Vec<[f32; 3]>,
 }
 
 #[allow(dead_code)]
-impl LineStripBuilder {
-  pub fn new_non_loop() -> Self {
+impl TriangleStripBuilder {
+  pub fn new() -> Self {
     Self {
-      looped: false,
       default_color: None,
-      points: Default::default(),
-      colors: Default::default(),
-    }
-  }
-  pub fn new_loop() -> Self {
-    Self {
-      looped: true,
-      default_color: None,
+      indecies: Default::default(),
       points: Default::default(),
       colors: Default::default(),
     }
@@ -65,44 +57,49 @@ impl LineStripBuilder {
     }
     self
   }
-
   pub fn append_with_color(mut self, point: Vec3, color: Vec3) -> Self {
     self.points.push([point.x, point.y, point.z]);
     self.colors.push([color.x, color.y, color.z]);
     self
   }
-
-  pub fn build(self, meshes: &mut ResMut<Assets<Mesh>>) -> LineBundle {
+  pub fn push_indices(mut self, indices: &[u32]) -> Self {
+    self.indecies.extend(indices);
+    self
+  }
+  pub fn push_index(mut self, index: u32) -> Self {
+    self.indecies.push(index);
+    self
+  }
+  pub fn build(self, meshes: &mut ResMut<Assets<Mesh>>) -> TriangleBundle {
     let mut indicies: Vec<u32> = (0..self.points.len() as u32).collect();
-    if self.looped {
-      indicies.push(0);
-    }
-    let mut mesh = Mesh::new(PrimitiveTopology::LineStrip);
+    let mut mesh = Mesh::new(PrimitiveTopology::TriangleStrip);
     mesh.set_indices(Some(Indices::U32(indicies)));
     mesh.set_attribute(Mesh::ATTRIBUTE_POSITION, self.points);
     mesh.set_attribute(Mesh::ATTRIBUTE_COLOR, self.colors);
 
-    LineBundle {
+    TriangleBundle {
       mesh: meshes.add(mesh),
       render_pipelines: RenderPipelines::from_pipelines(vec![RenderPipeline::new(
-        LINE_STRIP_PIPELINE_HANDLE.typed(),
+        TRIANGLE_STRIP_PIPELINE_HANDLE.typed(),
       )]),
       ..Default::default()
     }
   }
 }
 
-pub struct LineListBuilder {
+pub struct TriangleListBuilder {
   default_color: Option<[f32; 3]>,
+  indecies: Vec<u32>,
   points: Vec<[f32; 3]>,
   colors: Vec<[f32; 3]>,
 }
 
 #[allow(dead_code)]
-impl LineListBuilder {
+impl TriangleListBuilder {
   pub fn new() -> Self {
     Self {
       default_color: None,
+      indecies: Default::default(),
       points: Default::default(),
       colors: Default::default(),
     }
@@ -111,42 +108,38 @@ impl LineListBuilder {
     self.default_color = Some([color.x, color.y, color.z]);
     self
   }
-
-  pub fn append(mut self, from: Vec3, to: Vec3) -> Self {
-    self.points.push([from.x, from.y, from.z]);
-    self.points.push([to.x, to.y, to.z]);
+  pub fn append(mut self, point: Vec3) -> Self {
+    self.points.push([point.x, point.y, point.z]);
     if let Some(default_color) = self.default_color {
-      self.colors.push(default_color);
       self.colors.push(default_color);
     } else if self.colors.is_empty() {
       self.colors.push([1.0, 1.0, 1.0]);
-      self.colors.push([1.0, 1.0, 1.0]);
     } else {
-      let last1 = self.colors[self.colors.len()-2];
-      let last2 = self.colors[self.colors.len()-1];
-      self.colors.push(last1);
-      self.colors.push(last2);
+      let last = self.colors.last().unwrap().clone();
+      self.colors.push(last);
     }
     self
   }
-  pub fn append_with_color(mut self, from: Vec3, to: Vec3, color1: Vec3, color2: Vec3) -> Self {
-    self.points.push([from.x, from.y, from.z]);
-    self.points.push([to.x, to.y, to.z]);
-    self.colors.push([color1.x, color1.y, color1.z]);
-    self.colors.push([color2.x, color2.y, color2.z]);
+  pub fn append_with_color(mut self, point: Vec3, color: Vec3) -> Self {
+    self.points.push([point.x, point.y, point.z]);
+    self.colors.push([color.x, color.y, color.z]);
     self
   }
-  pub fn build(self, meshes: &mut ResMut<Assets<Mesh>>) -> LineBundle {
-    let indicies = (0..(self.points.len() as u32)).collect::<Vec<u32>>();
-    let mut mesh = Mesh::new(PrimitiveTopology::LineList);
+  pub fn push_triangle(mut self, i1: u32, i2: u32, i3:u32) -> Self {
+    self.indecies.extend(&[i1, i2, i3]);
+    self
+  }
+  pub fn build(self, meshes: &mut ResMut<Assets<Mesh>>) -> TriangleBundle {
+    let mut indicies: Vec<u32> = (0..self.points.len() as u32).collect();
+    let mut mesh = Mesh::new(PrimitiveTopology::TriangleStrip);
     mesh.set_indices(Some(Indices::U32(indicies)));
     mesh.set_attribute(Mesh::ATTRIBUTE_POSITION, self.points);
     mesh.set_attribute(Mesh::ATTRIBUTE_COLOR, self.colors);
 
-    LineBundle {
+    TriangleBundle {
       mesh: meshes.add(mesh),
       render_pipelines: RenderPipelines::from_pipelines(vec![RenderPipeline::new(
-        LINE_LIST_PIPELINE_HANDLE.typed(),
+        TRIANGLE_STRIP_PIPELINE_HANDLE.typed(),
       )]),
       ..Default::default()
     }
@@ -154,7 +147,7 @@ impl LineListBuilder {
 }
 
 #[derive(Default, Debug, Bundle, Clone)]
-pub struct LineBundle {
+pub struct TriangleBundle {
   pub mesh: Handle<Mesh>,
   pub draw: Draw,
   pub visible: Visible,
@@ -164,9 +157,9 @@ pub struct LineBundle {
   pub global_transform: GlobalTransform,
 }
 
-pub const LINE_LIST_PIPELINE_HANDLE: HandleUntyped =
+pub const TRIANGLE_PIPELINE_HANDLE: HandleUntyped =
     HandleUntyped::weak_from_u64(PipelineDescriptor::TYPE_UUID, 16566712244797685760);
-pub const LINE_STRIP_PIPELINE_HANDLE: HandleUntyped =
+pub const TRIANGLE_STRIP_PIPELINE_HANDLE: HandleUntyped =
     HandleUntyped::weak_from_u64(PipelineDescriptor::TYPE_UUID, 6657636463977684992);
 
 fn build_line_pipeline(shaders: &mut Assets<Shader>, topology: PrimitiveTopology) -> PipelineDescriptor {

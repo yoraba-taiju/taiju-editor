@@ -19,18 +19,21 @@ impl <T> Default for ExecState<T> {
 }
 
 impl <T> ExecState<T> {
+  #[allow(dead_code)]
   pub fn is_executing(&self) -> bool {
     match self {
       &ExecState::Executing => true,
       _ => false
     }
   }
+  #[allow(dead_code)]
   pub fn is_done(&self) -> bool {
     match self {
       &ExecState::Done => true,
       _ => false
     }
   }
+  #[allow(dead_code)]
   pub fn is_available(&self) -> bool {
     match self {
       &ExecState::Available(_) => true,

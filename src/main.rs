@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
+use editor::CameraAnchor;
 use taiju::chapter::prelude::*;
 use taiju::donut::Clock;
 
@@ -25,6 +26,7 @@ fn main() {
     
     .add_system_to_stage(CoreStage::Update, editor::display_ui.system())
     .add_system_to_stage(CoreStage::Update, editor::update_frame.system())
+    .add_system_to_stage(CoreStage::Update, editor::click_enemy.system())
 
     .add_system_to_stage(CoreStage::PostUpdate, editor::reload_map.system())
     .run();
@@ -41,6 +43,6 @@ fn setup(
   BulletServer::spawn(&mut commands, &asset_server, &mut color_materials, &mut texture_atlases);
 
   // cameras
-  commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+  commands.spawn_bundle(OrthographicCameraBundle::new_2d()).insert(CameraAnchor);
   commands.spawn_bundle(UiCameraBundle::default());
 }

@@ -43,7 +43,12 @@ pub fn reload_map(
           let mut spr = enemy_server.sprites[&desc.body].clone();
           spr.transform.translation.x = desc.position.x + pos.x;
           spr.transform.translation.y = desc.position.y + pos.y;
-          let id = commands.spawn().insert_bundle(spr).id();
+          let id = commands
+            .spawn()
+            .insert_bundle(spr)
+            .insert(EnemyAnchor)
+            .insert(desc.clone())
+            .id();
           map_entities.push(id);
         }
       }

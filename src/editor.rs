@@ -7,14 +7,14 @@ mod systems_egui;
 mod systems_window;
 mod systems_map;
 mod systems_map_reloading;
-mod systems_map_hit;
+mod systems_map_selection;
 pub use anchors::*;
 pub use states::*;
 pub use systems_egui::*;
 pub use systems_window::*;
 pub use systems_map::*;
 pub use systems_map_reloading::*;
-pub use systems_map_hit::*;
+pub use systems_map_selection::*;
 
 pub fn spawn_resources(
   mut commands: Commands,

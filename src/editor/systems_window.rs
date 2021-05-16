@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::editor::states::*;
+use crate::editor::editor_states::*;
 
 pub fn update_window_state(
   mut window_state: ResMut<WindowState>,

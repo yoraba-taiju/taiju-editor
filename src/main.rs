@@ -39,7 +39,6 @@ fn setup(
   mut texture_atlases: ResMut<Assets<TextureAtlas>>,
   mut color_materials: ResMut<Assets<ColorMaterial>>,
   asset_server: Res<AssetServer>,
-  mut meshes: ResMut<Assets<Mesh>>,
 ) {
   // Resources to load
   EnemyServer::spawn(&mut commands, &asset_server, &mut color_materials, &mut texture_atlases);

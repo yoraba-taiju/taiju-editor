@@ -8,8 +8,8 @@ edition = "2018"
 
 [dependencies]
 bevy = "0.5"
-bevy_egui = "0.4"
+bevy_egui = "0.4.2"
 ron = "0.6.4"
 dialog = "0.3.0"
 taiju = { path = "../taiju" }
-serde = "1.0.125"
+serde = "1.0.126"

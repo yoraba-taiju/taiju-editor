@@ -46,6 +46,7 @@ fn setup(
   commands.insert_resource(state::MouseState::default());
   commands.insert_resource(state::WindowState::default());
 
+  ///////// Add Camera /////////
   // Spawn cameras
   commands.spawn_bundle(OrthographicCameraBundle::new_2d());
   commands.spawn_bundle(UiCameraBundle::default());

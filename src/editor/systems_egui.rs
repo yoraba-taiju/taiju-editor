@@ -33,31 +33,4 @@ pub fn display_ui(
       });  
     });
   });
-  egui::Window::new("Timeline")
-    .title_bar(true)
-    .open(&mut subwindow_state.open_timeline_window)
-    .min_width(200.0)
-    .show(ctx, |ui| {
-      { // show bar
-        let range = {
-          if let Some(map) = map_state.map.as_ref() {
-            0..=(map.duration as u32)
-          } else {
-            0..=100
-          }
-        };
-        ui.horizontal(|ui| {
-          ui.label("Time: ");
-          ui.add(egui::DragValue::new(&mut frame_state.current_time).speed(1).clamp_range(range.clone()));
-        });
-        ui.spacing_mut().slider_width = ui.available_width();
-        ui.add(egui::Slider::new(&mut frame_state.current_time, range.clone()).show_value(false).smart_aim(true));
-      }
-    });
-  egui::Window::new("Edit Event/Object")
-    .title_bar(true)
-    .open(&mut subwindow_state.open_editor_window)
-    .min_width(200.0)
-    .show(ctx, |ui|{
-    });
 }

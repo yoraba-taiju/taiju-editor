@@ -1,7 +1,7 @@
-use std::{fs::File, io::Read, ops::RangeInclusive};
+use std::{fs::File, io::Read};
 use bevy::prelude::*;
 use bevy_egui::*;
-use crate::{component::map::{CourseComponent, CourseCurrentFrameComponent, MapComponent}, state::*};
+use crate::{component::map::{CourseComponent, CourseCurrentFrameComponent}, state::*};
 use crate::runtime::*;
 use crate::io::map::MapToLoad;
 use crate::model::Map;
@@ -54,32 +54,24 @@ pub fn display_timeline(
     .open(&mut egui_state.open_timeline_window)
     .min_width(200.0)
     .show(ctx, |ui| {
-      { // show bar
-        let range: RangeInclusive<usize> = {
-          if let Ok(course) = course {
-            0..=course.length
-          } else {
-            0..=0
-          }
-        };
-        let mut zero: usize = 0;
-        let mut current_time: &mut usize = &mut zero;
-        // if frame.is_ok() {
-        //   current_time = &mut (frame.unwrap().at);
-        // }
+      if frame.is_ok() && course.is_ok() {
+        let course = course.unwrap();
+        let mut frame = frame.unwrap(); // show bar
+        let range = 0..=course.length;
         ui.horizontal(|ui| {
           ui.label("Time: ");
-          ui.add(egui::DragValue::new(current_time).speed(1).clamp_range(range.clone()));
+          ui.add(egui::DragValue::new(&mut frame.at).speed(1).clamp_range(range.clone()));
         });
         ui.spacing_mut().slider_width = ui.available_width();
-        ui.add(egui::Slider::new(current_time, range.clone()).show_value(false).smart_aim(true));
+        ui.add(egui::Slider::new(&mut frame.at, range.clone()).show_value(false).smart_aim(true));
+      } else {
+        ui.label("Please load or create map!");
       }
     });
 }
 
 pub fn display_edit (
   egui_ctx: Res<EguiContext>,
-  runtime: Res<Runtime>,
   mut egui_state: ResMut<EguiState>,
 ) {
   let ctx = egui_ctx.ctx();

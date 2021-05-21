@@ -26,6 +26,7 @@ fn main() {
     .add_startup_system(setup.system())
     .add_system_to_stage(CoreStage::PreUpdate, system::window::update.system())
     .add_system_to_stage(CoreStage::PreUpdate, system::mouse::update.system())
+    .add_system_to_stage(CoreStage::PreUpdate, system::keyboard::update.system())
     .add_system_set(egui_systems)
     .add_system_to_stage(CoreStage::PostUpdate, system::recalc_frames::on_changed.system())
     .run();
@@ -51,6 +52,7 @@ fn setup(
   // Other gui
   commands.insert_resource(state::EguiState::default());
   commands.insert_resource(state::MouseState::default());
+  commands.insert_resource(state::KeyboardState::default());
   commands.insert_resource(state::WindowState::default());
 
   ///////// Add Camera /////////

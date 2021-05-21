@@ -10,8 +10,9 @@ pub use frames::Frames;
 mod mouse;
 pub use mouse::MouseState;
 
-mod input;
-pub use input::Input;
+mod keyboard;
+pub use keyboard::KeyboardState;
+pub use keyboard::KeyState;
 
 mod window;
 pub use window::WindowState;

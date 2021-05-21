@@ -17,6 +17,7 @@ pub struct MapBundle {
 impl MapBundle {
   pub fn new() -> Self {
     Self {
+      transform: Transform::from_scale(Vec3::new(0.2,0.2,0.2)),
       ..Default::default()
     }
   }
@@ -144,26 +145,67 @@ impl EventBundle {
 
 pub fn insert(
   commands: &mut Commands,
+  color_materials: &mut ResMut<Assets<ColorMaterial>>,
   map: &model::Map,
 ) -> crate::state::MapState {
   let mut course_id = Entity::new(0);
   let mut current_frame_id = Entity::new(0);
   let map_id: Entity;
 
-  map_id = commands.spawn().insert(MapBundle::new())
+  let color_material = color_materials.add(ColorMaterial::color(Color::rgba(0.5, 0.5, 1.0, 0.5)));
+  map_id = commands.spawn_bundle(MapBundle::new())
   .with_children(|builder| {
-    course_id = builder.spawn()
-      .insert_bundle(CourseBundle::new(map.course.length))
+    course_id = builder.spawn_bundle(CourseBundle::new(map.course.length))
       .with_children(|builder|{
         for (at, pos) in &map.course.keyframes {
           builder.spawn().insert_bundle(CourseKeyframeBundle::new(*at, *pos));
         }
       }).id();
-    current_frame_id = builder.spawn()
-      .insert_bundle(CourseCurrentFrameBundle::new(0))
+
+    current_frame_id = builder.spawn_bundle(CourseCurrentFrameBundle::new(0))
+      .with_children(|builder| {
+        let color_material = color_materials.add(ColorMaterial::color(Color::rgba(0.5, 0.5, 1.0, 0.5)));
+        builder.spawn_bundle(SpriteBundle{
+          sprite: Sprite {
+            size: Vec2::new(1920.0, 10.0),
+            ..Default::default()
+          },
+          material: color_material.clone(),
+          transform: Transform::from_xyz(0.0, 1080.0/2.0, 0.0),
+          ..Default::default()
+        });
+        builder.spawn_bundle(SpriteBundle{
+          sprite: Sprite {
+            size: Vec2::new(1920.0, 10.0),
+            ..Default::default()
+          },
+          material: color_material.clone(),
+          transform: Transform::from_xyz(0.0, -1080.0/2.0, 0.0),
+          ..Default::default()
+        });
+        builder.spawn_bundle(SpriteBundle{
+          sprite: Sprite {
+            size: Vec2::new(10.0, 1080.0),
+            ..Default::default()
+          },
+          material: color_material.clone(),
+          transform: Transform::from_xyz(1920.0/2.0, 0.0, 0.0),
+          ..Default::default()
+        });
+        builder.spawn_bundle(SpriteBundle{
+          sprite: Sprite {
+            size: Vec2::new(10.0, 1080.0),
+            ..Default::default()
+          },
+          material: color_material.clone(),
+          transform: Transform::from_xyz(-1920.0/2.0, 0.0, 0.0),
+          ..Default::default()
+        });
+      })
       .id();
+
     for event in &map.events {
-      builder.spawn().insert_bundle(EventBundle::new(event.at as usize, event.event.clone()));
+      builder.spawn_bundle(EventBundle::new(event.at as usize, event.event.clone()));
     }
   }).id();
   crate::state::MapState {

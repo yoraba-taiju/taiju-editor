@@ -28,35 +28,6 @@ pub fn move_map(
   map_trans.translation.y = map_state.pos.y;
 }
 
-pub fn move_current_frame(
-  keyboard_input: Res<Input<KeyCode>>,
-  mut map_state: ResMut<MapState>,
-  mut frame_state: ResMut<CurrentFrameState>,
-) {
-  let map = if let Some(map) = map_state.map.as_ref() {
-    map
-  } else {
-    return;
-  };
-  
-  let mut changed = false;
-  if keyboard_input.pressed(KeyCode::Left) {
-    if frame_state.current_time > 0 {
-      frame_state.current_time -= 1;
-      changed = true;
-    }
-  }
-  if keyboard_input.pressed(KeyCode::Right) {
-    frame_state.current_time = std::cmp::min(map.duration as u32, frame_state.current_time + 1);
-    changed = true;
-  }
-  if changed {
-    let pos = map.pos[frame_state.current_time as usize];
-    map_state.pos.x = (-pos.x) * map_state.scale;
-    map_state.pos.y = (-pos.y) * map_state.scale;
-  }
-}
-
 pub fn update_frame (
   map_state: Res<MapState>,
   frame_state: Res<CurrentFrameState>,

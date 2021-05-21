@@ -42,8 +42,3 @@ pub fn update_game_object_visibility(
   }
 }
 
-fn contains(pos: &Vec2, size: &Vec2, point: &Vec2) -> bool {
-  let beg = *pos - (*size / 2.0);
-  let end = beg + *size;
-  return beg.x <= point.x && point.x <= end.x && beg.y <= point.y && point.y <= end.y;
-}

@@ -24,6 +24,7 @@ fn main() {
     .add_plugin(EguiPlugin)
     .add_plugin(bevy_render_primitive::PrimitivePlugin)
     .add_startup_system(setup.system())
+    .add_system_to_stage(CoreStage::PreUpdate, system::window::update.system())
     .add_system_set(egui_systems)
     .add_system_to_stage(CoreStage::PostUpdate, system::recalc_frames::on_changed.system())
     .run();

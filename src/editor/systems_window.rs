@@ -1,14 +1,6 @@
 use bevy::prelude::*;
 use crate::editor::editor_states::*;
 
-pub fn update_window_state(
-  mut window_state: ResMut<WindowState>,
-  windows: Res<Windows>,
-){
-  let window = windows.get_primary().unwrap();
-  window_state.size = Vec2::new(window.width(), window.height());
-}
-
 pub fn update_mouse_state(
   mut mosue_state: ResMut<MouseState>,
   mut map_state: ResMut<MapState>,

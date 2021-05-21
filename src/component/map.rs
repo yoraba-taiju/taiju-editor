@@ -150,7 +150,7 @@ pub fn insert(
   let mut current_frame_id = Entity::new(0);
   let map_id: Entity;
 
-  map_id = commands.spawn().insert(MapComponent)
+  map_id = commands.spawn().insert(MapBundle::new())
   .with_children(|builder| {
     course_id = builder.spawn()
       .insert_bundle(CourseBundle::new(map.course.length))

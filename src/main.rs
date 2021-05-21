@@ -39,10 +39,13 @@ fn setup(
   commands.insert_resource(runtime::Runtime::new());
   // io
   commands.insert_resource(io::map::MapToLoad(None));
-  // state
-  commands.insert_resource(state::EguiState::default());
-  //commands.insert_resource(state::MapState);
+  // Map
+  let map = model::Map::default();
+  let map_state = component::map::insert(&mut commands, &map);
+  commands.insert_resource(map_state);
   commands.insert_resource(state::MapTransformState::default());
+  // Other gui
+  commands.insert_resource(state::EguiState::default());
   commands.insert_resource(state::MouseState::default());
   commands.insert_resource(state::WindowState::default());
 

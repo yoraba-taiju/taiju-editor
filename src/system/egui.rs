@@ -43,10 +43,10 @@ pub fn display_menu(
 pub fn display_timeline(
   egui_ctx: Res<EguiContext>,
   mut egui_state: ResMut<EguiState>,
-  course_query: Query<&CourseComponent>,
+  mut course_query: Query<&mut CourseComponent>,
   mut frame_query: Query<&mut CourseCurrentFrameComponent>,
 ) {
-  let course = course_query.single();
+  let course = course_query.single_mut();
   let frame = frame_query.single_mut();
   let ctx = egui_ctx.ctx();
   egui::Window::new("Timeline")
@@ -55,9 +55,17 @@ pub fn display_timeline(
     .min_width(200.0)
     .show(ctx, |ui| {
       if frame.is_ok() && course.is_ok() {
-        let course = course.unwrap();
+        let mut course = course.unwrap();
         let mut frame = frame.unwrap(); // show bar
         let range = 0..=course.length;
+        let mut course_length = course.length;
+        ui.horizontal(|ui| {
+          ui.label("Course Length: ");
+          ui.add(egui::DragValue::new(&mut course_length).speed(1));
+        });
+        if course_length != course.length {
+          course.length = course_length;
+        }
         ui.horizontal(|ui| {
           ui.label("Time: ");
           ui.add(egui::DragValue::new(&mut frame.at).speed(1).clamp_range(range.clone()));

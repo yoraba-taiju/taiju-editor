@@ -57,7 +57,6 @@ impl CourseBundle {
 #[derive(Debug, Default)]
 pub struct CourseKeyframeComponent {
   pub at: usize,
-  pub pos: Vec2,
 }
 
 #[derive(Debug, Default, Bundle)]
@@ -73,8 +72,8 @@ impl CourseKeyframeBundle {
     Self {
       course_keyframe_component: CourseKeyframeComponent {
         at,
-        pos,
       },
+      transform: Transform::from_xyz(pos.x, pos.y, 0.0),
       ..Default::default()
     }
   }

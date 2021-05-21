@@ -4,6 +4,9 @@ pub use map::{
   MapTransformState,
 };
 
+mod frames;
+pub use frames::Frames;
+
 mod mouse;
 pub use mouse::MouseState;
 

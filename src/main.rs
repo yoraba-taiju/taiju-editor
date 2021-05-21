@@ -25,6 +25,7 @@ fn main() {
     .add_plugin(bevy_render_primitive::PrimitivePlugin)
     .add_startup_system(setup.system())
     .add_system_set(egui_systems)
+    .add_system_to_stage(CoreStage::PostUpdate, system::recalc_frames::on_changed.system())
     .run();
 }
 
@@ -44,6 +45,7 @@ fn setup(
   let map_state = component::map::insert(&mut commands, &mut color_materials, &map);
   commands.insert_resource(map_state);
   commands.insert_resource(state::MapTransformState::default());
+  commands.insert_resource(state::Frames::default());
   // Other gui
   commands.insert_resource(state::EguiState::default());
   commands.insert_resource(state::MouseState::default());

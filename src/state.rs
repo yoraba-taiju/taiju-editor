@@ -9,6 +9,8 @@ pub use frames::Frames;
 
 mod mouse;
 pub use mouse::MouseState;
+pub use mouse::MouseButtonState;
+pub use mouse::MouseDragState;
 
 mod keyboard;
 pub use keyboard::KeyboardState;

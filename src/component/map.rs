@@ -74,6 +74,7 @@ impl EventBundle {
 pub fn insert(
   commands: &mut Commands,
   color_materials: &mut ResMut<Assets<ColorMaterial>>,
+  mut meshes: &mut ResMut<Assets<Mesh>>,
   map: &model::Map,
 ) -> crate::state::MapState {
   let mut course_id = Entity::new(0);
@@ -82,7 +83,7 @@ pub fn insert(
 
   map_id = commands.spawn_bundle(MapBundle::new())
   .with_children(|builder| {
-    course_id = course::insert(builder, &map.course);
+    course_id = course::insert(builder, &mut meshes, &map.course);
 
     current_frame_id = course::current_frame::insert(builder);
 

@@ -19,7 +19,7 @@ impl Default for Course {
   fn default() -> Self {
     let mut keyframes: HashMap<usize, Vec2> = HashMap::new();
     keyframes.insert(0, Vec2::new(0.0, 0.0));
-    keyframes.insert(DEFAULT_COURSE_LENGTH-1, Vec2::new(100.0, 0.0));
+    keyframes.insert(DEFAULT_COURSE_LENGTH-1, Vec2::new(2000.0, 0.0));
     Self {
       length: DEFAULT_COURSE_LENGTH,
       keyframes,

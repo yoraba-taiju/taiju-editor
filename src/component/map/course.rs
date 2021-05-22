@@ -4,6 +4,7 @@ use crate::model;
 
 pub mod current_frame;
 pub mod key_frame;
+pub mod route;
 
 /******************************************************************************
  ** Course
@@ -34,12 +35,15 @@ pub mod key_frame;
 
  pub fn insert(
   commands: &mut ChildBuilder,
+  mut meshes: &mut ResMut<Assets<Mesh>>,
   course: &model::map::Course,
 ) -> Entity {
-  commands.spawn_bundle(CourseBundle::new(course.length))
+  commands
+    .spawn_bundle(CourseBundle::new(course.length))
     .with_children(|builder|{
       for (at, pos) in &course.keyframes {
         key_frame::insert(builder, *at, *pos);
       }
+      route::insert(builder, &mut meshes);
     }).id()
 }

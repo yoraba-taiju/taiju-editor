@@ -70,16 +70,12 @@ impl TriangleStripBuilder {
     self.indecies.push(index);
     self
   }
-  pub fn build_mesh(self) -> Mesh {
+
+  pub fn build(self, meshes: &mut Assets<Mesh>) -> TriangleBundle {
     let mut mesh = Mesh::new(PrimitiveTopology::TriangleStrip);
     mesh.set_indices(Some(Indices::U32(self.indecies)));
     mesh.set_attribute(Mesh::ATTRIBUTE_POSITION, self.points);
     mesh.set_attribute("Vertex_ColorWithAlpha", self.colors);
-    mesh
-  }
-
-  pub fn build_bundle(self, meshes: &mut ResMut<Assets<Mesh>>) -> TriangleBundle {
-    let mesh = self.build_mesh();
 
     TriangleBundle {
       mesh: meshes.add(mesh),
@@ -133,15 +129,11 @@ impl TriangleListBuilder {
     self.indecies.extend(&[i1, i2, i3]);
     self
   }
-  pub fn build_mesh(self) -> Mesh {
+  pub fn build(self, meshes: &mut Assets<Mesh>) -> TriangleBundle {
     let mut mesh = Mesh::new(PrimitiveTopology::TriangleStrip);
     mesh.set_indices(Some(Indices::U32(self.indecies)));
     mesh.set_attribute(Mesh::ATTRIBUTE_POSITION, self.points);
     mesh.set_attribute("Vertex_ColorWithAlpha", self.colors);
-    mesh
-  }
-  pub fn build_bundle(self, meshes: &mut ResMut<Assets<Mesh>>) -> TriangleBundle {
-    let mesh = self.build_mesh();
 
     TriangleBundle {
       mesh: meshes.add(mesh),

@@ -2,11 +2,13 @@ use std::collections::HashMap;
 
 use bevy::prelude::*;
 use crate::state::Frames;
+use crate::component::map::course::route::Route;
 use crate::component::map::course::CourseComponent;
 use crate::component::map::course::key_frame::KeyFrameComponent;
 
 pub fn on_changed(
   mut frames: ResMut<Frames>,
+  mut route: Query<&mut Route>,
   course_query: Query<&CourseComponent>,
   keyframe_query: Query<(Entity, &KeyFrameComponent, &Transform)>,
   //
@@ -59,6 +61,12 @@ pub fn on_changed(
   }
   let mut keyframes = keyframs.into_iter().collect::<Vec<(usize, Vec2)>>();
   keyframes.sort_by_key(|(k, _v)| *k);
+  //
+  if let Ok(mut route) = route.single_mut() {
+    route.updated_route = Some(keyframes.iter().map(|(_, v)| *v).collect::<Vec<Vec2>>());
+  }
+
+  // recalc all position
   let mut positions = Vec::<Vec2>::new();
   if keyframes.is_empty() {
     frames.positions = positions;

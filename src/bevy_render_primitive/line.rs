@@ -71,7 +71,8 @@ impl LineStripBuilder {
     self.colors.push([color.r(), color.g(), color.b(), color.a()]);
     self
   }
-  pub fn build_mesh(self) -> Mesh {
+
+  pub fn build_bundle(self, meshes: &mut Assets<Mesh>) -> LineBundle {
     let mut indicies: Vec<u32> = (0..self.points.len() as u32).collect();
     if self.looped {
       indicies.push(0);
@@ -80,11 +81,6 @@ impl LineStripBuilder {
     mesh.set_indices(Some(Indices::U32(indicies)));
     mesh.set_attribute(Mesh::ATTRIBUTE_POSITION, self.points);
     mesh.set_attribute("Vertex_ColorWithAlpha", self.colors);
-    mesh
-  }
-
-  pub fn build_bundle(self, meshes: &mut ResMut<Assets<Mesh>>) -> LineBundle {
-    let mesh = self.build_mesh();
 
     LineBundle {
       mesh: meshes.add(mesh),
@@ -140,16 +136,12 @@ impl LineListBuilder {
     self.colors.push([color2.r(), color2.g(), color2.b(), color2.a()]);
     self
   }
-  pub fn build_mesh(self) -> Mesh {
+  pub fn build(self, meshes: &mut Assets<Mesh>) -> LineBundle {
     let indicies = (0..(self.points.len() as u32)).collect::<Vec<u32>>();
     let mut mesh = Mesh::new(PrimitiveTopology::LineList);
     mesh.set_indices(Some(Indices::U32(indicies)));
     mesh.set_attribute(Mesh::ATTRIBUTE_POSITION, self.points);
     mesh.set_attribute("Vertex_ColorWithAlpha", self.colors);
-    mesh
-  }
-  pub fn build(self, meshes: &mut ResMut<Assets<Mesh>>) -> LineBundle {
-    let mesh = self.build_mesh();
 
     LineBundle {
       mesh: meshes.add(mesh),

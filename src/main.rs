@@ -29,8 +29,9 @@ fn main() {
     .add_system_to_stage(CoreStage::PreUpdate, system::mouse::update.system())
     .add_system_to_stage(CoreStage::PreUpdate, system::keyboard::update.system())
     .add_system_set(egui_systems)
-    .add_system_to_stage(CoreStage::Update, system::current_frame::update.system())
-    .add_system_to_stage(CoreStage::PostUpdate, system::recalc_frames::on_changed.system())
+    .add_system_to_stage(CoreStage::Update, system::map::course::current_frame::update.system())
+    .add_system_to_stage(CoreStage::Update, system::map::course::route::update_on_changed.system())
+    .add_system_to_stage(CoreStage::PostUpdate, system::map::course::recalc_positions::on_changed.system())
     .run();
 }
 
@@ -38,6 +39,7 @@ fn setup(
   mut commands: Commands,
   mut texture_atlases: ResMut<Assets<TextureAtlas>>,
   mut color_materials: ResMut<Assets<ColorMaterial>>,
+  mut meshes: ResMut<Assets<Mesh>>,
   asset_server: Res<AssetServer>,
 ) {
   ///////// Add Res /////////
@@ -47,7 +49,7 @@ fn setup(
   commands.insert_resource(io::map::MapToLoad(None));
   // Map
   let map = model::Map::default();
-  let map_state = component::map::insert(&mut commands, &mut color_materials, &map);
+  let map_state = component::map::insert(&mut commands, &mut color_materials, &mut meshes, &map);
   commands.insert_resource(map_state);
   commands.insert_resource(state::MapTransformState::default());
   commands.insert_resource(state::Frames::default());

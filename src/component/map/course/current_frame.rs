@@ -27,6 +27,10 @@ impl CurrentFrameBundle {
   }
 }
 
+/******************************************************************************
+ ** Init
+ ******************************************************************************/
+
 const COLOR_HANDLE: HandleUntyped = HandleUntyped::weak_from_u64(ColorMaterial::TYPE_UUID, 17941059021890322432);
 
 pub fn init(app: &mut AppBuilder) {

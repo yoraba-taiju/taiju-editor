@@ -3,11 +3,15 @@ use crate::{model, state::MapState};
 
 pub mod course;
 
-pub struct MapPlugin;
+/******************************************************************************
+ ** Init(Plugin)
+ ******************************************************************************/
+ pub struct MapPlugin;
 
 impl Plugin for MapPlugin {
   fn build(&self, app: &mut AppBuilder) {
     course::current_frame::init(app);
+    course::key_frame::init(app);
   }
 }
 

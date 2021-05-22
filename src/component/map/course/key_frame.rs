@@ -1,4 +1,6 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, reflect::TypeUuid};
+
+use crate::bevy_render_primitive::{self, TriangleListBuilder};
 
 /******************************************************************************
  ** KeyFrame
@@ -36,5 +38,28 @@ use bevy::prelude::*;
 ) -> Entity {
   commands
     .spawn_bundle(KeyFrameBundle::new(at, pos))
+    .with_children(|builder| {
+       builder.spawn_bundle(SpriteBundle {
+         material: MATERIAL_HANDLE.typed(),
+         ..Default::default()
+       });
+    })
     .id()
 }
+
+/******************************************************************************
+ ** Init
+ ******************************************************************************/
+
+const MATERIAL_HANDLE: HandleUntyped = HandleUntyped::weak_from_u64(ColorMaterial::TYPE_UUID, 9202969657271345152);
+
+pub fn init(app: &mut AppBuilder) {
+  let world = app.world_mut();
+
+  let asset_server: &AssetServer = world.get_resource().unwrap();
+  let texture: Handle<Texture> = asset_server.load("component/map/course/key_frame.png");
+
+  let mut color_material: Mut<Assets<ColorMaterial>> = world.get_resource_mut().unwrap();
+  color_material.set_untracked(MATERIAL_HANDLE, texture.into());
+}
+

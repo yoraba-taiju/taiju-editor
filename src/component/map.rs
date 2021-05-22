@@ -151,7 +151,6 @@ pub fn insert(
   let mut current_frame_id = Entity::new(0);
   let map_id: Entity;
 
-  let color_material = color_materials.add(ColorMaterial::color(Color::rgba(0.5, 0.5, 1.0, 0.5)));
   map_id = commands.spawn_bundle(MapBundle::new())
   .with_children(|builder| {
     course_id = builder.spawn_bundle(CourseBundle::new(map.course.length))

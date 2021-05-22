@@ -16,6 +16,7 @@ pub struct Map {
   pub scapes: Vec<Scape>,
 }
 
+#[allow(dead_code)]
 impl Map {
   pub fn from_string(str: &str) -> ron::Result<Self> {
     ron::from_str::<Self>(str)

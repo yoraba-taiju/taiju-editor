@@ -1,6 +1,16 @@
 use bevy::prelude::*;
 use crate::{model, state::MapState};
 
+pub mod course;
+
+pub struct MapPlugin;
+
+impl Plugin for MapPlugin {
+  fn build(&self, app: &mut AppBuilder) {
+    course::current_frame::init(app);
+  }
+}
+
 /******************************************************************************
  ** Map
  ******************************************************************************/
@@ -80,35 +90,6 @@ impl CourseKeyframeBundle {
 }
 
 /******************************************************************************
- ** CourseCurrentFrame
- ******************************************************************************/
-
-
- #[derive(Debug, Default)]
- pub struct CourseCurrentFrameComponent {
-  pub at: usize,
-}
-
-#[derive(Debug, Default, Bundle)]
-pub struct CourseCurrentFrameBundle {
-  pub course_current_frame_component: CourseCurrentFrameComponent,
-  pub global_transform: GlobalTransform,
-  pub transform: Transform,
-}
-
-
-impl CourseCurrentFrameBundle {
-  pub fn new(at: usize) -> Self {
-    Self {
-      course_current_frame_component: CourseCurrentFrameComponent {
-        at,
-      },
-      ..Default::default()
-    }
-  }
-}
-
-/******************************************************************************
  ** Event
  ******************************************************************************/
 
@@ -160,47 +141,7 @@ pub fn insert(
         }
       }).id();
 
-    current_frame_id = builder.spawn_bundle(CourseCurrentFrameBundle::new(0))
-      .with_children(|builder| {
-        let color_material = color_materials.add(ColorMaterial::color(Color::rgba(0.5, 0.5, 1.0, 0.5)));
-        builder.spawn_bundle(SpriteBundle{
-          sprite: Sprite {
-            size: Vec2::new(1920.0, 10.0),
-            ..Default::default()
-          },
-          material: color_material.clone(),
-          transform: Transform::from_xyz(0.0, 1080.0/2.0, 0.0),
-          ..Default::default()
-        });
-        builder.spawn_bundle(SpriteBundle{
-          sprite: Sprite {
-            size: Vec2::new(1920.0, 10.0),
-            ..Default::default()
-          },
-          material: color_material.clone(),
-          transform: Transform::from_xyz(0.0, -1080.0/2.0, 0.0),
-          ..Default::default()
-        });
-        builder.spawn_bundle(SpriteBundle{
-          sprite: Sprite {
-            size: Vec2::new(10.0, 1080.0),
-            ..Default::default()
-          },
-          material: color_material.clone(),
-          transform: Transform::from_xyz(1920.0/2.0, 0.0, 0.0),
-          ..Default::default()
-        });
-        builder.spawn_bundle(SpriteBundle{
-          sprite: Sprite {
-            size: Vec2::new(10.0, 1080.0),
-            ..Default::default()
-          },
-          material: color_material.clone(),
-          transform: Transform::from_xyz(-1920.0/2.0, 0.0, 0.0),
-          ..Default::default()
-        });
-      })
-      .id();
+    current_frame_id = course::current_frame::insert(builder);
 
     for event in &map.events {
       builder.spawn_bundle(EventBundle::new(event.at as usize, event.event.clone()));

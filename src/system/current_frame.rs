@@ -1,12 +1,12 @@
 use bevy::prelude::*;
 
-use crate::{component::map::{CourseComponent, CourseCurrentFrameComponent}, state::KeyboardState};
-
+use crate::component;
+use crate::state::KeyboardState;
 
 pub fn update(
   keyboard_state: Res<KeyboardState>,
-  course_query: Query<&CourseComponent>,
-  mut frame_query: Query<&mut CourseCurrentFrameComponent>,
+  course_query: Query<&component::map::CourseComponent>,
+  mut frame_query: Query<&mut component::map::course::current_frame::CurrentFrameComponent>,
 ) {
   let course = course_query.single();
   let frame = frame_query.single_mut();

@@ -23,6 +23,7 @@ fn main() {
     .add_plugins(DefaultPlugins)
     .add_plugin(EguiPlugin)
     .add_plugin(bevy_render_primitive::PrimitivePlugin)
+    .add_plugin(component::map::MapPlugin)
     .add_startup_system(setup.system())
     .add_system_to_stage(CoreStage::PreUpdate, system::window::update.system())
     .add_system_to_stage(CoreStage::PreUpdate, system::mouse::update.system())

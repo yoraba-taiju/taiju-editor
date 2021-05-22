@@ -1,10 +1,12 @@
 use std::{fs::File, io::Read};
 use bevy::prelude::*;
 use bevy_egui::*;
-use crate::{component::map::{CourseComponent, CourseCurrentFrameComponent}, state::*};
+
+use crate::model;
+use crate::component;
+use crate::state::*;
 use crate::runtime::*;
 use crate::io::map::MapToLoad;
-use crate::model::Map;
 
 pub fn display_menu(
   egui_ctx: Res<EguiContext>,
@@ -20,7 +22,7 @@ pub fn display_menu(
           let handle = runtime.spawn(async {
             let mut bytes = Vec::new();
             File::open("./current_map.ron").unwrap().read_to_end(&mut bytes).unwrap();
-            let map =Map::from_string(std::str::from_utf8(&bytes).unwrap()).unwrap();
+            let map = model::Map::from_string(std::str::from_utf8(&bytes).unwrap()).unwrap();
             map
           });
           map_to_load.0 = Some(handle);
@@ -43,8 +45,8 @@ pub fn display_menu(
 pub fn display_timeline(
   egui_ctx: Res<EguiContext>,
   mut egui_state: ResMut<EguiState>,
-  mut course_query: Query<&mut CourseComponent>,
-  mut frame_query: Query<&mut CourseCurrentFrameComponent>,
+  mut course_query: Query<&mut component::map::CourseComponent>,
+  mut frame_query: Query<&mut component::map::course::current_frame::CurrentFrameComponent>,
 ) {
   let course = course_query.single_mut();
   let frame = frame_query.single_mut();

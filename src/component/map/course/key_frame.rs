@@ -1,7 +1,5 @@
 use bevy::{prelude::*, reflect::TypeUuid};
 
-use crate::bevy_render_primitive::{self, TriangleListBuilder};
-
 /******************************************************************************
  ** KeyFrame
  ******************************************************************************/

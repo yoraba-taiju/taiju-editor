@@ -46,10 +46,13 @@ fn setup(
   commands.insert_resource(io::map::MapToLoad(None));
   // Map
   let map = model::Map::default();
+  
   let map_state = component::map::insert(&mut commands, &mut color_materials, &map);
   commands.insert_resource(map_state);
   commands.insert_resource(state::MapTransformState::default());
   commands.insert_resource(state::Frames::default());
+  // Map to load
+  commands.insert_resource(io::map::MapToLoad::default());
   // Other gui
   commands.insert_resource(state::EguiState::default());
   commands.insert_resource(state::MouseState::default());

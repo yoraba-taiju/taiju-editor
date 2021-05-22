@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use crate::{model, state::MapState};
 
 pub mod course;
+pub mod event;
 
 /******************************************************************************
  ** Init(Plugin)
@@ -38,42 +39,12 @@ impl MapBundle {
 }
 
 /******************************************************************************
- ** Event
- ******************************************************************************/
-
-#[derive(Debug)]
-pub struct EventComponent {
-  pub at: usize,
-  pub event: taiju::chapter::scenario::Event,
-}
-
-#[derive(Debug, Bundle)]
-pub struct EventBundle {
-  pub event_component: EventComponent,
-  pub global_transform: GlobalTransform,
-  pub transform: Transform,
-}
-
-impl EventBundle {
-  pub fn new(at: usize, event: taiju::chapter::scenario::Event) -> Self {
-    Self {
-      event_component: EventComponent {
-        at,
-        event,
-      },
-      global_transform: Default::default(),
-      transform: Default::default(),
-    }
-  }
-}
-
-/******************************************************************************
  ** Inseet/Delete
  ******************************************************************************/
 
 pub fn insert(
   commands: &mut Commands,
-  color_materials: &mut ResMut<Assets<ColorMaterial>>,
+  mut color_materials: &mut ResMut<Assets<ColorMaterial>>,
   mut meshes: &mut ResMut<Assets<Mesh>>,
   map: &model::Map,
 ) -> crate::state::MapState {
@@ -88,7 +59,7 @@ pub fn insert(
     current_frame_id = course::current_frame::insert(builder);
 
     for event in &map.events {
-      builder.spawn_bundle(EventBundle::new(event.at as usize, event.event.clone()));
+      event::insert(builder, &mut color_materials, event);
     }
   }).id();
   crate::state::MapState {

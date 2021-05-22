@@ -38,9 +38,9 @@ pub fn init(app: &mut AppBuilder) {
 pub fn insert(
   commands: &mut ChildBuilder,
 ) -> Entity {
+  let color_material: Handle<ColorMaterial> = COLOR_HANDLE.typed();
   commands.spawn_bundle(CurrentFrameBundle::new(0))
   .with_children(|builder| {
-    let color_material: Handle<ColorMaterial> = COLOR_HANDLE.typed();
     builder.spawn_bundle(SpriteBundle{
       sprite: Sprite {
         size: Vec2::new(1920.0, 10.0),

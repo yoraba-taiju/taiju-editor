@@ -37,9 +37,9 @@ pub mod key_frame;
   course: &model::map::Course,
 ) -> Entity {
   commands.spawn_bundle(CourseBundle::new(course.length))
-      .with_children(|builder|{
-        for (at, pos) in &course.keyframes {
-          key_frame::insert(builder, *at, *pos);
-        }
-      }).id()
+    .with_children(|builder|{
+      for (at, pos) in &course.keyframes {
+        key_frame::insert(builder, *at, *pos);
+      }
+    }).id()
 }

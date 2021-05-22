@@ -28,6 +28,7 @@ fn main() {
     .add_system_to_stage(CoreStage::PreUpdate, system::mouse::update.system())
     .add_system_to_stage(CoreStage::PreUpdate, system::keyboard::update.system())
     .add_system_set(egui_systems)
+    .add_system_to_stage(CoreStage::Update, system::current_frame::update.system())
     .add_system_to_stage(CoreStage::PostUpdate, system::recalc_frames::on_changed.system())
     .run();
 }

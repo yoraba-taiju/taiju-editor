@@ -1,4 +1,4 @@
-use bevy::{prelude::*, reflect::TypeUuid, render::pipeline::PipelineDescriptor};
+use bevy::{prelude::*, reflect::TypeUuid};
 
 /******************************************************************************
  ** CourseCurrentFrame

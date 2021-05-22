@@ -35,7 +35,6 @@ pub fn update_on_changed(
   }
   commands.entity(route_id).with_children(|commands| {
     route.child = commands.spawn_bundle(b.build(&mut *meshes)).id();
-    println!("Next child: {:?}", route.child);
   });
   route.updated_route = None;
 }

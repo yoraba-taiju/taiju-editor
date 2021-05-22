@@ -1,5 +1,3 @@
-use bevy::prelude::*;
-
 #[derive(Debug, Default)]
 pub struct KeyboardState {
   pub left: KeyState,

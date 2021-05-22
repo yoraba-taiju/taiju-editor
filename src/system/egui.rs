@@ -59,7 +59,7 @@ pub fn display_timeline(
       if frame.is_ok() && course.is_ok() {
         let mut course = course.unwrap();
         let mut frame = frame.unwrap(); // show bar
-        let range = 0..=course.length;
+        let range = 0..=(course.length-1);
         let mut course_length = course.length;
         ui.horizontal(|ui| {
           ui.label("Course Length: ");

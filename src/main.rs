@@ -46,7 +46,6 @@ fn setup(
   commands.insert_resource(io::map::MapToLoad(None));
   // Map
   let map = model::Map::default();
-  
   let map_state = component::map::insert(&mut commands, &mut color_materials, &map);
   commands.insert_resource(map_state);
   commands.insert_resource(state::MapTransformState::default());

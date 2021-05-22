@@ -5,7 +5,7 @@ use crate::state::KeyboardState;
 
 pub fn update(
   keyboard_state: Res<KeyboardState>,
-  course_query: Query<&component::map::CourseComponent>,
+  course_query: Query<&component::map::course::CourseComponent>,
   mut frame_query: Query<&mut component::map::course::current_frame::CurrentFrameComponent>,
 ) {
   let course = course_query.single();

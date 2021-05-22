@@ -45,7 +45,7 @@ pub fn display_menu(
 pub fn display_timeline(
   egui_ctx: Res<EguiContext>,
   mut egui_state: ResMut<EguiState>,
-  mut course_query: Query<&mut component::map::CourseComponent>,
+  mut course_query: Query<&mut component::map::course::CourseComponent>,
   mut frame_query: Query<&mut component::map::course::current_frame::CurrentFrameComponent>,
 ) {
   let course = course_query.single_mut();

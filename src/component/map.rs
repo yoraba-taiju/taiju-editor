@@ -34,62 +34,6 @@ impl MapBundle {
 }
 
 /******************************************************************************
- ** Course
- ******************************************************************************/
-
-#[derive(Debug, Default)]
-pub struct CourseComponent {
-  pub length: usize,
-}
-
-#[derive(Debug, Default, Bundle)]
-pub struct CourseBundle {
-  pub course_componense: CourseComponent,
-  pub global_transform: GlobalTransform,
-  pub transform: Transform,
-}
-
-impl CourseBundle {
-  pub fn new(length: usize) -> Self {
-    Self {
-      course_componense: CourseComponent {
-        length,
-      },
-      ..Default::default()
-    }
-  }
-}
-
-/******************************************************************************
- ** CourseKeyframe
- ******************************************************************************/
-
-#[derive(Debug, Default)]
-pub struct CourseKeyframeComponent {
-  pub at: usize,
-}
-
-#[derive(Debug, Default, Bundle)]
-pub struct CourseKeyframeBundle {
-  pub course_keyframe_component: CourseKeyframeComponent,
-  pub global_transform: GlobalTransform,
-  pub transform: Transform,
-}
-
-
-impl CourseKeyframeBundle {
-  pub fn new(at: usize, pos: Vec2) -> Self {
-    Self {
-      course_keyframe_component: CourseKeyframeComponent {
-        at,
-      },
-      transform: Transform::from_xyz(pos.x, pos.y, 0.0),
-      ..Default::default()
-    }
-  }
-}
-
-/******************************************************************************
  ** Event
  ******************************************************************************/
 
@@ -134,12 +78,7 @@ pub fn insert(
 
   map_id = commands.spawn_bundle(MapBundle::new())
   .with_children(|builder| {
-    course_id = builder.spawn_bundle(CourseBundle::new(map.course.length))
-      .with_children(|builder|{
-        for (at, pos) in &map.course.keyframes {
-          builder.spawn().insert_bundle(CourseKeyframeBundle::new(*at, *pos));
-        }
-      }).id();
+    course_id = course::insert(builder, &map.course);
 
     current_frame_id = course::current_frame::insert(builder);
 

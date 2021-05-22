@@ -1,17 +1,19 @@
 use std::collections::HashMap;
 
 use bevy::prelude::*;
-use crate::{component::map::*, state::Frames};
+use crate::state::Frames;
+use crate::component::map::course::CourseComponent;
+use crate::component::map::course::key_frame::KeyFrameComponent;
 
 pub fn on_changed(
   mut frames: ResMut<Frames>,
   course_query: Query<&CourseComponent>,
-  keyframe_query: Query<(Entity, &CourseKeyframeComponent, &Transform)>,
+  keyframe_query: Query<(Entity, &KeyFrameComponent, &Transform)>,
   //
   course_changed_query: Query<&CourseComponent, Changed<CourseComponent>>,
-  changed_query: Query<(Entity, &CourseKeyframeComponent, &Transform), Changed<Transform>>,
-  added_query: Query<(Entity, &CourseKeyframeComponent, &Transform), Added<CourseKeyframeComponent>>,
-  removed_query: RemovedComponents<CourseKeyframeComponent>,
+  changed_query: Query<(Entity, &KeyFrameComponent, &Transform), Changed<Transform>>,
+  added_query: Query<(Entity, &KeyFrameComponent, &Transform), Added<KeyFrameComponent>>,
+  removed_query: RemovedComponents<KeyFrameComponent>,
 ) {
   let course_component = if let Ok(course_component) = course_query.single() {
     course_component
@@ -49,7 +51,7 @@ pub fn on_changed(
   let mut keyframs = HashMap::<usize, Vec2>::new();
   for (
     _entity,
-    CourseKeyframeComponent { at },
+    KeyFrameComponent { at },
     transform
   ) in keyframe_query.iter()
   {

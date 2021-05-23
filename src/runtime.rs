@@ -7,6 +7,7 @@ pub struct Runtime {
 }
 
 #[derive(Debug)]
+#[allow(dead_code)]
 pub enum ExecState<T> {
   None,
   Executing,
@@ -18,22 +19,20 @@ impl <T> Default for ExecState<T> {
   fn default() -> Self { ExecState::None }
 }
 
+#[allow(dead_code)]
 impl <T> ExecState<T> {
-  #[allow(dead_code)]
   pub fn is_executing(&self) -> bool {
     match self {
       &ExecState::Executing => true,
       _ => false
     }
   }
-  #[allow(dead_code)]
   pub fn is_done(&self) -> bool {
     match self {
       &ExecState::Done => true,
       _ => false
     }
   }
-  #[allow(dead_code)]
   pub fn is_available(&self) -> bool {
     match self {
       &ExecState::Available(_) => true,
@@ -47,6 +46,7 @@ pub struct Handle <T> {
   state: RwLock<ExecState<T>>,
 }
 
+#[allow(dead_code)]
 impl <T> Handle<T> {
   pub fn take(&self) -> Option<T> {
     let mut state = self.state.write().unwrap();

@@ -4,6 +4,9 @@ pub use map::{
   MapTransformState,
 };
 
+pub mod selection;
+pub use selection::SelectionState;
+
 mod frames;
 pub use frames::Frames;
 

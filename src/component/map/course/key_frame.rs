@@ -1,5 +1,7 @@
 use bevy::{prelude::*, reflect::TypeUuid};
 
+use crate::component::map::SelectableComponent;
+
 /******************************************************************************
  ** KeyFrame
  ******************************************************************************/
@@ -9,27 +11,28 @@ use bevy::{prelude::*, reflect::TypeUuid};
    pub at: usize,
  }
  
- #[derive(Debug, Default, Bundle)]
- pub struct KeyFrameBundle {
-   pub key_frame_component: KeyFrameComponent,
-   pub global_transform: GlobalTransform,
-   pub transform: Transform,
- }
- 
- 
- impl KeyFrameBundle {
-   pub fn new(at: usize, pos: Vec2) -> Self {
-     Self {
-       key_frame_component: KeyFrameComponent {
-         at,
-       },
-       transform: Transform::from_xyz(pos.x, pos.y, 0.0),
-       ..Default::default()
-     }
-   }
- }
- 
- pub fn insert(
+#[derive(Debug, Bundle)]
+pub struct KeyFrameBundle {
+  pub key_frame_component: KeyFrameComponent,
+  pub global_transform: GlobalTransform,
+  pub transform: Transform,
+  pub selectable: SelectableComponent,
+}
+
+impl KeyFrameBundle {
+  pub fn new(at: usize, pos: Vec2) -> Self {
+    Self {
+      key_frame_component: KeyFrameComponent {
+        at,
+      },
+      transform: Transform::from_xyz(pos.x, pos.y, 0.0),
+      global_transform: GlobalTransform::identity(),
+      selectable: SelectableComponent::new(Vec2::new(128.0,128.0))
+    }
+  }
+}
+
+pub fn insert(
   commands: &mut ChildBuilder,
   at: usize,
   pos: Vec2,

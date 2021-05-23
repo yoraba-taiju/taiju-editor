@@ -63,7 +63,7 @@ pub fn on_changed(
   keyframes.sort_by_key(|(k, _v)| *k);
   //
   if let Ok(mut route) = route.single_mut() {
-    route.updated_route = Some(keyframes.iter().map(|(_, v)| *v).collect::<Vec<Vec2>>());
+    route.route_to_update = Some(keyframes.iter().map(|(_, v)| *v).collect::<Vec<Vec2>>());
   }
 
   // recalc all position

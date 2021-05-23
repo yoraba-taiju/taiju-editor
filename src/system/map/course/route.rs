@@ -12,7 +12,7 @@ pub fn update_on_changed(
   } else {
     return;
   };
-  let routes = if let Some(ref routes) = route.updated_route {
+  let routes = if let Some(ref routes) = route.route_to_update {
     routes
   } else {
     return;
@@ -36,5 +36,5 @@ pub fn update_on_changed(
   commands.entity(route_id).with_children(|commands| {
     route.child = commands.spawn_bundle(b.build(&mut *meshes)).id();
   });
-  route.updated_route = None;
+  route.route_to_update = None;
 }

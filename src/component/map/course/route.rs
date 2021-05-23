@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use crate::{bevy_render_primitive::TriangleListBuilder, model};
 
 pub struct Route {
-  pub updated_route: Option<Vec<Vec2>>,
+  pub route_to_update: Option<Vec<Vec2>>,
   pub child: Entity,
 }
 
@@ -22,7 +22,7 @@ pub fn insert(
 ) -> Entity {
   let mut spawner = commands.spawn();
   let mut route = Route {
-    updated_route: None,
+    route_to_update: None,
     child: Entity::new(0),
   };
   spawner.with_children(|builder| {

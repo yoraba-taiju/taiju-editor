@@ -39,6 +39,11 @@ use bevy::{prelude::*, reflect::TypeUuid};
     .with_children(|builder| {
        builder.spawn_bundle(SpriteBundle {
          material: MATERIAL_HANDLE.typed(),
+         sprite: Sprite {
+           size: Vec2::new(128.0, 128.0),
+           resize_mode: SpriteResizeMode::Manual,
+           ..Default::default()
+         },
          ..Default::default()
        });
     })
@@ -58,6 +63,6 @@ pub fn init(app: &mut AppBuilder) {
   let texture: Handle<Texture> = asset_server.load("component/map/course/key_frame.png");
 
   let mut color_material: Mut<Assets<ColorMaterial>> = world.get_resource_mut().unwrap();
-  color_material.set_untracked(MATERIAL_HANDLE, texture.into());
+  color_material.set_untracked(MATERIAL_HANDLE, ColorMaterial::texture(texture));
 }
 

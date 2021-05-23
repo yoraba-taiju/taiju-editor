@@ -49,7 +49,6 @@ fn contains(pos: &Vec2, size: &Vec2, point: &Vec2) -> bool {
 }
 
 pub fn move_selected(
-  mut commands: Commands,
   mouse_state: Res<MouseState>,
   selected_query: Query<(Entity, &Parent), With<SelectedComponent>>,
   mut parent_query: Query<(Entity, &mut Transform, &GlobalTransform)>,
@@ -65,9 +64,8 @@ pub fn move_selected(
     return;
   };
   for (_entity, &Parent(parent_id)) in selected_query.iter() {
-    for (_entity, ref mut transform, global_transform) in parent_query.get_mut(parent_id).iter_mut() {
-      transform.translation.x += delta.x / global_transform.scale.x;
-      transform.translation.y += delta.y / global_transform.scale.y;
-    }
+    let (_entity, ref mut transform, global_transform) = parent_query.get_mut(parent_id).unwrap();
+    transform.translation.x += delta.x / global_transform.scale.x;
+    transform.translation.y += delta.y / global_transform.scale.y;
   }
 }

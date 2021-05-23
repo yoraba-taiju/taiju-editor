@@ -24,6 +24,7 @@ fn main() {
     .add_plugin(EguiPlugin)
     .add_plugin(bevy_render_primitive::PrimitivePlugin)
     .add_plugin(component::map::MapPlugin)
+    .add_plugin(component::selection::SelectionPlugin)
     .add_startup_system(setup.system())
     .add_system_to_stage(CoreStage::PreUpdate, system::window::update.system())
     .add_system_to_stage(CoreStage::PreUpdate, system::mouse::update.system())
@@ -54,8 +55,6 @@ fn setup(
   commands.insert_resource(map_state);
   commands.insert_resource(state::MapTransformState::default());
   commands.insert_resource(state::Frames::default());
-  // Selection state
-  commands.insert_resource(state::SelectionState::default());
   // Other gui
   commands.insert_resource(state::EguiState::default());
   commands.insert_resource(state::MouseState::default());

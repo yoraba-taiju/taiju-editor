@@ -1,6 +1,6 @@
 use bevy::{prelude::*, reflect::TypeUuid};
 
-use crate::component::map::SelectableComponent;
+use crate::component::selection::SelectableComponent;
 
 /******************************************************************************
  ** KeyFrame

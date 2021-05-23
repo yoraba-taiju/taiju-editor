@@ -38,21 +38,6 @@ impl MapBundle {
   }
 }
 
-/******************************************************************************
- ** Selectable
- ******************************************************************************/
-#[derive(Debug)]
-pub struct SelectableComponent {
-  pub size: Vec2,
-}
-
-impl SelectableComponent {
-  pub fn new(size: Vec2) -> Self {
-    Self {
-      size,
-    }
-  }
-}
 
 /******************************************************************************
  ** Inseet/Delete

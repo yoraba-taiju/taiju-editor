@@ -26,7 +26,8 @@ fn main() {
 
   let selection_system_set =
     SystemSet::new()
-      .with_system(system::selection::update_selection.system());
+      .with_system(system::selection::update_selection.system())
+      .with_system(system::selection::move_selected.system());
 
   App::build()
     .add_plugins(DefaultPlugins)

@@ -33,7 +33,7 @@ impl MouseButtonState {
 
 #[derive(Debug)]
 pub enum MouseDragState {
-  Dragging { button: MouseButton, from: Vec2, to: Vec2 },
+  Dragging { button: MouseButton, from: Vec2, to: Vec2, delta: Vec2 },
   NotDragging,
 }
 
@@ -45,9 +45,9 @@ impl Default for MouseDragState {
 
 #[allow(dead_code)]
 impl MouseDragState {
-  fn is_dragging(&self) -> bool {
+  pub fn is_dragging(&self) -> bool {
     match self {
-      &MouseDragState::Dragging { button: _, from: _, to: _ } => true,
+      &MouseDragState::Dragging { button: _, from: _, to: _, delta: _, } => true,
       &MouseDragState::NotDragging => false,
     }
   }

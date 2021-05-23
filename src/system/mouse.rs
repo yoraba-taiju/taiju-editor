@@ -24,7 +24,8 @@ pub fn update_state(
     current_pos = event.position - (window_state.size/2.0);
   }
   mosue_state.current_pos = current_pos;
-  if let &mut MouseDragState::Dragging { button: _, from: _, ref mut to} = &mut mosue_state.drag {
+  if let &mut MouseDragState::Dragging { button: _, from: _, ref mut to, ref mut delta} = &mut mosue_state.drag {
+    *delta = current_pos - *to;
     *to = current_pos;
   }
   for button in mouse_button_input.get_just_pressed() {
@@ -32,6 +33,7 @@ pub fn update_state(
       button: *button, 
       from: mosue_state.current_pos,
       to: mosue_state.current_pos,
+      delta: Vec2::ZERO,
     };
     break;
   }

@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::component::selection::SelectableComponent;
+use crate::{component::selection::SelectableComponent, state::MouseDragState};
 use crate::component::selection::SelectedComponent;
 use crate::state::MouseState;
 
@@ -46,4 +46,28 @@ fn contains(pos: &Vec2, size: &Vec2, point: &Vec2) -> bool {
   let beg = *pos - (*size / 2.0);
   let end = beg + *size;
   return beg.x <= point.x && point.x <= end.x && beg.y <= point.y && point.y <= end.y;
+}
+
+pub fn move_selected(
+  mut commands: Commands,
+  mouse_state: Res<MouseState>,
+  selected_query: Query<(Entity, &Parent), With<SelectedComponent>>,
+  mut parent_query: Query<(Entity, &mut Transform, &GlobalTransform)>,
+) {
+  let delta = if let MouseDragState::Dragging {
+    button: MouseButton::Left,
+    from: _,
+    to: _,
+    delta,
+  } = mouse_state.drag {
+    delta
+  } else {
+    return;
+  };
+  for (_entity, &Parent(parent_id)) in selected_query.iter() {
+    for (_entity, ref mut transform, global_transform) in parent_query.get_mut(parent_id).iter_mut() {
+      transform.translation.x += delta.x / global_transform.scale.x;
+      transform.translation.y += delta.y / global_transform.scale.y;
+    }
+  }
 }

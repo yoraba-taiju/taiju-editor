@@ -28,7 +28,7 @@ pub fn update_on_changed(
     b = b.push_vertex(Vec3::new(v1.x, v1.y - 5.0, 0.0))
          .push_vertex(Vec3::new(v1.x, v1.y + 5.0, 0.0))
          .push_vertex(Vec3::new(v2.x, v2.y + 5.0, 0.0))
-         .push_vertex(Vec3::new(v2.x, v1.y - 5.0, 0.0))
+         .push_vertex(Vec3::new(v2.x, v2.y - 5.0, 0.0))
          .push_triangle(start_idx+0, start_idx+1, start_idx+2)
          .push_triangle(start_idx+0, start_idx+2, start_idx+3);
     start_idx += 4;

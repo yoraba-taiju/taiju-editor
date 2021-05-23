@@ -12,12 +12,21 @@ mod runtime;
 mod bevy_render_primitive;
 
 fn main() {
+  let input_system_set = 
+    SystemSet::new()
+      .with_system(system::window::update.system())
+      .with_system(system::mouse::update.system())
+      .with_system(system::keyboard::update.system());
 
-  let egui_systems =
+  let egui_system_set =
     SystemSet::new()
       .with_system(system::egui::display_menu.system())
       .with_system(system::egui::display_timeline.system())
       .with_system(system::egui::display_edit.system());
+
+  let selection_system_set =
+    SystemSet::new()
+      .with_system(system::selection::update_selection.system());
 
   App::build()
     .add_plugins(DefaultPlugins)
@@ -26,13 +35,11 @@ fn main() {
     .add_plugin(component::map::MapPlugin)
     .add_plugin(component::selection::SelectionPlugin)
     .add_startup_system(setup.system())
-    .add_system_to_stage(CoreStage::PreUpdate, system::window::update.system())
-    .add_system_to_stage(CoreStage::PreUpdate, system::mouse::update.system())
-    .add_system_to_stage(CoreStage::PreUpdate, system::keyboard::update.system())
-    .add_system_set(egui_systems)
+    .add_system_set_to_stage(CoreStage::PreUpdate, input_system_set)
+    .add_system_set_to_stage(CoreStage::Update, egui_system_set)
+    .add_system_set_to_stage(CoreStage::Update, selection_system_set)
     .add_system_to_stage(CoreStage::Update, system::map::course::current_frame::update.system())
     .add_system_to_stage(CoreStage::Update, system::map::course::route::update_on_changed.system())
-    .add_system_to_stage(CoreStage::Update, system::selection::update_selection.system())
     .add_system_to_stage(CoreStage::PostUpdate, system::map::course::recalc_positions::on_changed.system())
     .run();
 }

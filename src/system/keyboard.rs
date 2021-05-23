@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::state::{KeyState, KeyboardState};
 
-pub fn update(
+pub fn update_state(
   keyboard_input: Res<Input<KeyCode>>,
   mut keyboard_state: ResMut<KeyboardState>,
 ) {

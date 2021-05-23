@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::state::WindowState;
 
-pub fn update(
+pub fn update_state(
   mut window_state: ResMut<WindowState>,
   windows: Res<Windows>,
 ){

@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::state::{MouseButtonState, MouseDragState, MouseState, WindowState};
 
-pub fn update(
+pub fn update_state(
   mut mosue_state: ResMut<MouseState>,
   window_state: Res<WindowState>,
   mut cursor_moved_events: EventReader<CursorMoved>,

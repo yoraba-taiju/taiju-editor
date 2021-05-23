@@ -14,9 +14,9 @@ mod bevy_render_primitive;
 fn main() {
   let input_system_set = 
     SystemSet::new()
-      .with_system(system::window::update.system())
-      .with_system(system::mouse::update.system())
-      .with_system(system::keyboard::update.system());
+      .with_system(system::window::update_state.system())
+      .with_system(system::mouse::update_state.system())
+      .with_system(system::keyboard::update_state.system());
 
   let egui_system_set =
     SystemSet::new()

@@ -74,8 +74,8 @@ pub fn on_changed(
   }
   {
     let (beg_keyframe_idx, beg_keyframe_vec) = keyframes[0].clone();
-    for i in 0..=beg_keyframe_idx {
-      positions.push(beg_keyframe_vec * (i as f32) / (beg_keyframe_idx as f32));
+    for _i in 0..=beg_keyframe_idx {
+      positions.push(beg_keyframe_vec);
     }
   }
   let mut last_idx: usize = 0;
@@ -83,11 +83,10 @@ pub fn on_changed(
   for j in 1..keyframes.len() {
     let (beg_keyframe_idx, beg_keyframe_vec) = keyframes[j-1].clone();
     let (end_keyframe_idx, end_keyframe_vec) =keyframes[j].clone();
-    let length = end_keyframe_idx - beg_keyframe_idx;
+    let length =(end_keyframe_idx - beg_keyframe_idx) as f32;
     for i in (beg_keyframe_idx+1)..=end_keyframe_idx {
-      let d = i - beg_keyframe_idx;
-      last_vec = beg_keyframe_vec * ((length - d) as f32) / (beg_keyframe_idx as f32) +
-      end_keyframe_vec * (d as f32) / (beg_keyframe_idx as f32);
+      let d = (i - beg_keyframe_idx) as f32;
+      last_vec = (beg_keyframe_vec * (length - d) / length) + (end_keyframe_vec * d / length);
       last_idx = i;
       positions.push(last_vec);
     }

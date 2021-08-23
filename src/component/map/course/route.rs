@@ -1,8 +1,6 @@
-use std::ops::DerefMut;
-
 use bevy::prelude::*;
 
-use crate::{bevy_render_primitive::TriangleListBuilder, model};
+use crate::{bevy_render_primitive::TriangleListBuilder};
 
 pub struct Route {
   pub route_to_update: Option<Vec<Vec2>>,
